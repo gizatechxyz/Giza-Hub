@@ -1,0 +1,4 @@
+[crate_roots]
+mnist_nn = "/Users/raphael/Desktop/orion_tutorials/mnist_nn/src"
+orion = "/Users/raphael/Library/Caches/com.swmansion.scarb/registry/git/checkouts/orion-PS5FVI1VTTS96/9aa0501/src"
+
