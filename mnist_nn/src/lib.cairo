@@ -1,1 +1,1 @@
-mod test;
+mod generated;
