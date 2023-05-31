@@ -7,15 +7,15 @@ fn fc2_bias() -> Tensor<i32> {
     let mut shape = ArrayTrait::<usize>::new();
     shape.append(10);
     let mut data = ArrayTrait::<i32>::new();
-    data.append(IntegerTrait::new(397, true));
-    data.append(IntegerTrait::new(1384, false));
-    data.append(IntegerTrait::new(325, false));
-    data.append(IntegerTrait::new(942, true));
-    data.append(IntegerTrait::new(434, true));
-    data.append(IntegerTrait::new(956, false));
-    data.append(IntegerTrait::new(174, true));
-    data.append(IntegerTrait::new(1310, false));
-    data.append(IntegerTrait::new(1651, true));
-    data.append(IntegerTrait::new(2, false));
+    data.append(IntegerTrait::new(111, true));
+    data.append(IntegerTrait::new(757, false));
+    data.append(IntegerTrait::new(339, true));
+    data.append(IntegerTrait::new(46, false));
+    data.append(IntegerTrait::new(160, false));
+    data.append(IntegerTrait::new(341, false));
+    data.append(IntegerTrait::new(188, true));
+    data.append(IntegerTrait::new(37, false));
+    data.append(IntegerTrait::new(1378, true));
+    data.append(IntegerTrait::new(467, false));
     TensorTrait::new(shape.span(), data.span())
 }
