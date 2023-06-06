@@ -13,8 +13,9 @@ fn mnist_nn_test() {
     let input = input();
     let fc1_bias = fc1_bias();
     let fc1_weights = fc1_weights();
-    // let fc2_bias = fc2_bias();
-    // let fc2_weights = fc2_weights();
+    let fc2_bias = fc2_bias();
+    let fc2_weights = fc2_weights();
 
-    // let x = fc1(input, fc1_weights, fc1_bias);
+    let x = fc1(input, fc1_weights, fc1_bias);
+    let x = fc2(x, fc2_weights, fc2_bias);
 }
