@@ -9,4 +9,4 @@ orion = { git = "https://github.com/gizatechxyz/orion.git" }
 
 [scripts]
 sierra = "cairo-compile . -r"
-test = "cairo-test ."
+test = "scarb cairo-test -f mnist_nn_test"

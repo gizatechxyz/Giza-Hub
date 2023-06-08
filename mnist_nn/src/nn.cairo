@@ -1,5 +1,4 @@
-use orion::operators::tensor::core::{TensorTrait, Tensor};
-use orion::operators::tensor::implementations::impl_tensor_i32;
+use orion::operators::tensor::core::Tensor;
 use orion::numbers::signed_integer::{integer_trait::IntegerTrait, i32::i32};
 use orion::operators::nn::core::NNTrait;
 use orion::numbers::fixed_point::core::FixedType;
