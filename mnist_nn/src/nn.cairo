@@ -11,6 +11,5 @@ fn fc1(i: Tensor<i32>, w: Tensor<i32>, b: Tensor<i32>) -> Tensor<i32> {
 
 fn fc2(i: Tensor<i32>, w: Tensor<i32>, b: Tensor<i32>) -> Tensor<FixedType> {
     let x = NNTrait::linear(i, w, b, true);
-    let x = NNTrait::relu(@x, IntegerTrait::new(0, false));
     NNTrait::softmax(@x, 0)
 }
