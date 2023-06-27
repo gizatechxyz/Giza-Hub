@@ -11,9 +11,7 @@ use mnist_nn::generated::fc2_weights::fc2_weights;
 
 use orion::operators::tensor::implementations::impl_tensor_fp::Tensor_fp;
 
-#[test]
-#[available_gas(99999999999999999)]
-fn mnist_nn_test() {
+fn main() -> u32 {
     let input = input();
     let fc1_bias = fc1_bias();
     let fc1_weights = fc1_weights();
@@ -25,5 +23,5 @@ fn mnist_nn_test() {
 
     let x = *x.argmax(0, Option::None(()), Option::None(())).data.at(0);
 
-    assert(x == 7, 'should predict 7');
+    x
 }

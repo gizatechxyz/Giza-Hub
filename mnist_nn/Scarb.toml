@@ -3,7 +3,7 @@ name = "mnist_nn"
 version = "0.1.0"
 
 [dependencies]
-orion = { git = "https://github.com/gizatechxyz/orion.git" }
+orion = { git = "https://github.com/gizatechxyz/orion.git", branch = "develop" }
 
 [scripts]
 test = "scarb cairo-test -f mnist_nn_test"
