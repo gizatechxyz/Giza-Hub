@@ -8,16 +8,16 @@ fn fc2_bias() -> Tensor<i32> {
     let mut shape = ArrayTrait::<usize>::new();
     shape.append(10);
     let mut data = ArrayTrait::<i32>::new();
-    data.append(i32 { mag: 851, sign: true });
-    data.append(i32 { mag: 336, sign: false });
-    data.append(i32 { mag: 451, sign: false });
-    data.append(i32 { mag: 406, sign: true });
-    data.append(i32 { mag: 297, sign: false });
-    data.append(i32 { mag: 912, sign: false });
-    data.append(i32 { mag: 617, sign: true });
-    data.append(i32 { mag: 70, sign: false });
-    data.append(i32 { mag: 1225, sign: true });
-    data.append(i32 { mag: 486, sign: false });
+    data.append(i32 { mag: 925, sign: true });
+    data.append(i32 { mag: 738, sign: false });
+    data.append(i32 { mag: 648, sign: false });
+    data.append(i32 { mag: 708, sign: true });
+    data.append(i32 { mag: 66, sign: true });
+    data.append(i32 { mag: 956, sign: false });
+    data.append(i32 { mag: 417, sign: false });
+    data.append(i32 { mag: 175, sign: true });
+    data.append(i32 { mag: 1328, sign: true });
+    data.append(i32 { mag: 312, sign: false });
 let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) }; 
     TensorTrait::new(shape.span(), data.span(), Option::Some(extra))
 }

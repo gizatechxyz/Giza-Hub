@@ -1,6 +1,4 @@
-use core::traits::Into;
 use core::array::SpanTrait;
-use debug::PrintTrait;
 
 use mnist_nn::nn::fc1;
 use mnist_nn::nn::fc2;
@@ -23,7 +21,7 @@ fn mnist_nn_test() {
 
     let x = fc1(input, fc1_weights, fc1_bias);
     let x = fc2(x, fc2_weights, fc2_bias);
-    
+
     assert(*x.data.at(0).mag == 0, 'proba x is 0 -> 0');
     assert(*x.data.at(1).mag == 0, 'proba x is 1 -> 0');
     assert(*x.data.at(2).mag == 0, 'proba x is 2 -> 0');
