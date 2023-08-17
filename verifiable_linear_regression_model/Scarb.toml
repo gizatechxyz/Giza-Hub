@@ -1,0 +1,13 @@
+[package]
+name = "verifiable_linear_regression"
+version = "0.1.0"
+
+# See more keys and their definitions at https://docs.swmansion.com/scarb/docs/reference/manifest
+
+[dependencies]
+orion = { git = "https://github.com/gizatechxyz/orion.git", branch = "einsum-impl"   }
+
+
+[scripts]
+# foo = { path = "vendor/foo" }
+test = "scarb cairo-test -f linear_regression_test"
