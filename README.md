@@ -5,7 +5,7 @@
 ## Tutorials
 
 - [MNIST Classification with Feedforward Neural Network](./mnist_nn/QAT_MNIST_MLP.ipynb)
-- [Verifiable Linear Regression Model](./verifiable_simple_linear_regression_model/notebooks/verifiable_simple_linear_regression_model.ipynb)
+- [Verifiable Linear Regression Model](./verifiable_linear_regression_model/notebooks/verifiable_simple_linear_regression_model.ipynb)
 
 ## Learn the basics
 
