@@ -8,8 +8,8 @@ use orion::operators::tensor::implementations::{impl_tensor_u32::Tensor_u32, imp
 use orion::operators::tensor::core::{TensorTrait, Tensor, ExtraParams};
 use orion::operators::tensor::math::arithmetic::arithmetic_fp::core::{add, sub, mul, div};
 use orion::numbers::fixed_point::core::{FixedTrait, FixedType, FixedImpl};
-use orion::numbers::fixed_point::implementations::impl_16x16::{
-    FP16x16Impl, FP16x16Add, FP16x16AddEq, FP16x16Into, FP16x16Print, FP16x16PartialEq, FP16x16Sub,
+use orion::numbers::fixed_point::implementations::fp16x16::core::{
+    FP16x16Impl, FP16x16Add, FP16x16AddEq, FP16x16Print, FP16x16PartialEq, FP16x16Sub,
     FP16x16SubEq, FP16x16Mul, FP16x16MulEq, FP16x16Div, FP16x16DivEq, FP16x16PartialOrd, FP16x16Neg
 };
 
@@ -18,7 +18,7 @@ use orion::operators::tensor::linalg::matmul::matmul_fp::core::matmul;
 /// Calculates the mean of a given 1D tensor.
 fn calculate_mean(tensor_data: Tensor<FixedType>) -> FixedType {
 
-    let tensor_size = FP16x16Impl::from_unscaled_felt(tensor_data.data.len().into());
+    let tensor_size = FP16x16Impl::new_unscaled(tensor_data.data.len(), false);
 
     let cumulated_sum = tensor_data.cumsum(0, Option::None(()), Option::None(()));
     let sum_result = cumulated_sum.data[tensor_data.data.len()  - 1];

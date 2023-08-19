@@ -11,8 +11,8 @@ use orion::operators::tensor::implementations::{impl_tensor_u32::Tensor_u32, imp
 use orion::operators::tensor::core::{TensorTrait, Tensor, ExtraParams};
 use orion::operators::tensor::math::arithmetic::arithmetic_fp::core::{add, sub, mul, div};
 use orion::numbers::fixed_point::core::{FixedTrait, FixedType, FixedImpl};
-use orion::numbers::fixed_point::implementations::impl_16x16::{
-    FP16x16Impl, FP16x16Add, FP16x16AddEq, FP16x16Into, FP16x16Print, FP16x16PartialEq, FP16x16Sub,
+use orion::numbers::fixed_point::implementations::fp16x16::core::{
+    FP16x16Impl, FP16x16Add, FP16x16AddEq, FP16x16Print, FP16x16PartialEq, FP16x16Sub,
     FP16x16SubEq, FP16x16Mul, FP16x16MulEq, FP16x16Div, FP16x16DivEq, FP16x16PartialOrd, FP16x16Neg
 };
 
@@ -40,11 +40,11 @@ fn linear_regression_test() {
     // mse.print();       // mean squared error ouput
 
     let r_score = calculate_r_score(y_values, y_pred);
-    r_score.print();   // accuracy of model around 0.8303375244140625
+    r_score.print();   // accuracy of model around 0.97494506835
 
     assert(beta_value.mag > 0, 'x & y not positively correlated');
     assert(r_score.mag > 0, 'R-Squared needs to be above 0');
-    assert(r_score.mag < 62259, 'R-Squared has to be below 65536'); // 65536 represents ONE in fp16x16.
+    assert(r_score.mag < 65536, 'R-Squared has to be below 65536'); // 65536 represents ONE in fp16x16.
     assert(r_score.mag > 32768, 'Accuracy below 50% ');
 }
 

@@ -40,8 +40,8 @@ import matplotlib.pyplot as plt
 SEED = 42
 np.random.seed(SEED)
 # Generate 150 values for X and y
-X = np.linspace(-10, 25, 150).astype('int8')
-noise = np.random.normal(0, 10, len(X)).astype('int8')
+X = np.linspace(-0.5, 0.5, 150).astype('float64')
+noise = np.random.normal(0, 0.1, len(X)).astype('float64')
 
 ## main equation  for generating the dataset
 y = 2 * X + 5 + noise # y=2x+5 + noise
@@ -117,7 +117,7 @@ print('The y intercept of our regression line:', intercept)
 
 plt.scatter(X, y, label='Data Points')
 plt.plot(X, beta * X + intercept, color='red', label='Regression Line')
-plt.scatter(17,predicted_y_value, color='green', label='pred for x = 17 ')
+plt.scatter(0.17,predicted_y_value, color='green', label='pred for x = 0.17 ')
 plt.xlabel('X')
 plt.ylabel('y')
 plt.title('Linear Regression')
@@ -199,11 +199,9 @@ def generate_cairo_files(data, name):
             f.write(
                 "use array::ArrayTrait;\n" +
                 "use orion::operators::tensor::core::{TensorTrait, Tensor, ExtraParams};\n" +
-                "use orion::operators::tensor::implementations::impl_tensor_i32::Tensor_i32;\n" +
-                "use orion::numbers::signed_integer::i32::i32;\n\n" +
+                "use orion::operators::tensor::implementations::impl_tensor_fp::Tensor_fp;\n" +
                 "use orion::numbers::fixed_point::core::{FixedTrait, FixedType, FixedImpl};\n"
-                "use orion::operators::tensor::implementations::impl_tensor_fp::Tensor_fp;\n"
-                "use orion::numbers::fixed_point::implementations::impl_16x16::{FP16x16Impl, FP16x16Into, FP16x16PartialEq }; \n"+
+                "use orion::numbers::fixed_point::implementations::fp16x16::core::{FP16x16Impl, FP16x16PartialEq };\n"+
                 "fn {0}() -> Tensor<FixedType>  ".format(name) + "{\n" +
                 "    let mut shape = ArrayTrait::new();\n"
             )
@@ -213,7 +211,7 @@ def generate_cairo_files(data, name):
                 "    let mut data = ArrayTrait::new();\n"
             )
             for val in np.nditer(data.flatten()):
-                f.write("    data.append(FixedTrait::new_unscaled({0}, {1} ));\n".format(abs(int(val)), str(val < 0).lower()))
+                f.write("    data.append(FixedTrait::new({0}, {1} ));\n".format(abs(int(val * 2**16)), str(val < 0).lower()))
             f.write(
                 "let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) }; \n" +
                 "let tensor = TensorTrait::<FixedType>::new(shape.span(), data.span(), Option::Some(extra)); \n \n" +
@@ -248,7 +246,7 @@ use orion::numbers::signed_integer::i32::i32;
 
 use orion::numbers::fixed_point::core::{FixedTrait, FixedType, FixedImpl};
 use orion::operators::tensor::implementations::impl_tensor_fp::Tensor_fp;
-use orion::numbers::fixed_point::implementations::impl_16x16::{FP16x16Impl, FP16x16Into, FP16x16PartialEq }; 
+use orion::numbers::fixed_point::implementations::fp16x16::core::{FP16x16Impl, FP16x16Into, FP16x16PartialEq }; 
 
 fn X_values() -> Tensor<FixedType>  {
     let mut shape = ArrayTrait::new();
@@ -310,7 +308,7 @@ At this stage, we will be reproducing the OLS functions now that we have generat
 ```rust
 fn calculate_mean(tensor_data: Tensor<FixedType>) -> FixedType {
 
-    let tensor_size = FP16x16Impl::from_unscaled_felt(tensor_data.data.len().into());
+    let tensor_size = FP16x16Impl::new_unscaled(tensor_data.data.len(), false);
 
     let cumulated_sum = tensor_data.cumsum(0, Option::None(()), Option::None(()));
     let sum_result = cumulated_sum.data[tensor_data.data.len()  - 1];
@@ -419,8 +417,8 @@ use orion::operators::tensor::implementations::{impl_tensor_u32::Tensor_u32, imp
 use orion::operators::tensor::core::{TensorTrait, Tensor, ExtraParams};
 use orion::operators::tensor::math::arithmetic::arithmetic_fp::core::{add, sub, mul, div};
 use orion::numbers::fixed_point::core::{FixedTrait, FixedType, FixedImpl};
-use orion::numbers::fixed_point::implementations::impl_16x16::{
-    FP16x16Impl, FP16x16Add, FP16x16AddEq, FP16x16Into, FP16x16Print, FP16x16PartialEq, FP16x16Sub,
+use orion::numbers::fixed_point::implementations::fp16x16::core::{
+    FP16x16Impl, FP16x16Add, FP16x16AddEq, FP16x16Print, FP16x16PartialEq, FP16x16Sub,
     FP16x16SubEq, FP16x16Mul, FP16x16MulEq, FP16x16Div, FP16x16DivEq, FP16x16PartialOrd, FP16x16Neg
 };
 
@@ -448,11 +446,11 @@ fn linear_regression_test() {
     let mse = compute_mse(y_values, y_pred);
     // mse.print();       // mean squared error ouput
     let r_score = calculate_r_score(y_values, y_pred);
-    // r_score.print();   // accuracy of model 0.8303375244140625 
+    // r_score.print();   // accuracy of model 0.97494506835
 
     assert(beta_value.mag > 0, 'x & y not positively correlated');
     assert(r_score.mag > 0, 'R-Squared needs to be above 0');
-    assert(r_score.mag < 62259, 'R-Squared has to be below 65536'); // 65536 represents ONE in fp16x16.
+    assert(r_score.mag < 65536, 'R-Squared has to be below 65536'); // 65536 represents ONE in fp16x16.
     assert(r_score.mag > 32768, 'Accuracy below 50% ');
 }
 
