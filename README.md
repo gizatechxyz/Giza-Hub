@@ -1,6 +1,6 @@
-# Welcome to Orion tutorials
+# Welcome to Orion Tutorials
 
-`gizatechxyz/orion_tutorials` is a repository showcasing examples of using [Orion](https://github.com/gizatechxyz/orion). The goal is to have curated, short, few / no dependencies _high quality_ examples that are substantially different from each other that can be emulated in your existing work.
+`gizatechxyz/orion_tutorials` is a repository showcasing examples of using [Orion](https://github.com/gizatechxyz/orion). The aim is to curate brief, high-quality examples with minimal or no dependencies. These examples should be significantly different from each other, providing valuable models that can be incorporated into your existing work.
 
 ## Tutorials
 

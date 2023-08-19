@@ -1,5 +1,6 @@
 use orion::operators::tensor::core::TensorTrait;
-use core::array::SpanTrait;
+
+use core::array::{SpanTrait, ArrayTrait};
 
 use mnist_nn::nn::fc1;
 use mnist_nn::nn::fc2;
@@ -20,7 +21,7 @@ fn main() -> u32 {
 
     let x = fc1(input, fc1_weights, fc1_bias);
     let x = fc2(x, fc2_weights, fc2_bias);
-
+    
     let x = *x.argmax(0, Option::None(()), Option::None(())).data.at(0);
 
     x
