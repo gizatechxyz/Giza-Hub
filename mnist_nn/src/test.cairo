@@ -1,4 +1,3 @@
-use orion::operators::tensor::core::TensorTrait;
 use core::array::SpanTrait;
 
 use mnist_nn::nn::fc1;
