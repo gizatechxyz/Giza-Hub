@@ -26,3 +26,4 @@ fn mnist_nn_test() {
 
     assert(x == 7, 'should predict 7');
 }
+

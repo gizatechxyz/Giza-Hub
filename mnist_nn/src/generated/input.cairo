@@ -2,6 +2,7 @@ use array::ArrayTrait;
 use orion::operators::tensor::{TensorTrait, Tensor, I32Tensor};
 use orion::numbers::i32;
 
+
 fn input() -> Tensor<i32> {
     let mut shape = ArrayTrait::<usize>::new();
     shape.append(196);

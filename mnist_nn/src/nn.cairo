@@ -8,7 +8,5 @@ fn fc1(i: Tensor<i32>, w: Tensor<i32>, b: Tensor<i32>) -> Tensor<i32> {
 }
 
 fn fc2(i: Tensor<i32>, w: Tensor<i32>, b: Tensor<i32>) -> Tensor<i32> {
-    let x = NNTrait::linear(i, w, b);
-    x
-    // NNTrait::softmax(@x, 0)
+    NNTrait::linear(i, w, b)
 }
