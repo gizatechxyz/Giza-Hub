@@ -310,7 +310,7 @@ fn calculate_loss(
     w: @Tensor<FixedType>,
     x_train: @Tensor<FixedType>,
     y_train: @Tensor<FixedType>,
-    c: Tensor<FixedType>,
+    c: @Tensor<FixedType>,
     one_tensor: @Tensor<FixedType>,
     half_tensor: @Tensor<FixedType>,
     y_train_len: u32
@@ -328,7 +328,7 @@ fn calculate_loss(
     );
 
     let regularization_term = *half_tensor * (w.matmul(w));
-    let loss_tensor = mean_tensor + c * regularization_term;
+    let loss_tensor = mean_tensor + *c * regularization_term;
 
     loss_tensor.at(array![0].span())
 }
@@ -339,7 +339,7 @@ fn calculate_loss(
 
 ```rust
 fn calculate_gradient(
-    w: Tensor<FixedType>,
+    w: @Tensor<FixedType>,
     x_train: @Tensor<FixedType>,
     y_train: @Tensor<FixedType>,
     c: Tensor<FixedType>,
@@ -355,10 +355,10 @@ fn calculate_gradient(
         extra: Option::Some(extra),
     );
 
-    let mask = (*y_train * x_train.matmul(@w));
+    let mask = (*y_train * x_train.matmul(w));
     let mask = less(@mask, one_tensor);
 
-    let gradient = (((mask * *y_train).matmul(x_train) / tensor_size) * *neg_one_tensor) + (c * w);
+    let gradient = (((mask * *y_train).matmul(x_train) / tensor_size) * *neg_one_tensor) + (c * *w);
 
     gradient
 }
@@ -373,22 +373,18 @@ fn accuracy(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> FixedType {
 
     let mut right_data = *right.data;
     let mut left_data = *left.data;
-    let mut left_index = 0;
     let mut counter = 0;
 
     loop {
         match right_data.pop_front() {
             Option::Some(item) => {
                 let right_current_index = item;
-                let left_current_index = left_data[left_index];
-
-                let (y_value, z_value) = (left_current_index, right_current_index);
+                let left_current_index = left_data.pop_front();
+                let (y_value, z_value) = (left_current_index.unwrap(), right_current_index);
 
                 if *y_value == *z_value {
                     counter += 1;
                 };
-
-                left_index += 1;
             },
             Option::None(_) => {
                 break;
@@ -500,12 +496,14 @@ use verifiable_support_vector_machine::{helper::{calculate_loss, calculate_gradi
 fn train_step(
     x: @Tensor<FixedType>,
     y: @Tensor<FixedType>,
-    ref w: Tensor<FixedType>,
+    w: @Tensor<FixedType>,
     learning_rate: FixedType,
     one_tensor: @Tensor<FixedType>,
     half_tensor: @Tensor<FixedType>,
     neg_one_tensor: @Tensor<FixedType>,
-    y_train_len: u32
+    y_train_len: u32,
+    iterations: u32,
+    index: u32
 ) -> Tensor<FixedType> {
     let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
     let learning_rate_tensor = TensorTrait::new(
@@ -518,11 +516,30 @@ fn train_step(
         extra: Option::Some(extra),
     );
 
-    let gradient = calculate_gradient(w, x, y, c, one_tensor, neg_one_tensor, y_train_len);
+    let mut w_recursive = *w;
 
-    w = w - (learning_rate_tensor * gradient);
+    let gradient = calculate_gradient(
+        @w_recursive, x, y, c, one_tensor, neg_one_tensor, y_train_len
+    );
 
-    w
+    w_recursive = w_recursive - (learning_rate_tensor * gradient);
+
+    if index == iterations {
+        return w_recursive;
+    }
+
+    train_step(
+        x,
+        y,
+        @w_recursive,
+        learning_rate,
+        one_tensor,
+        half_tensor,
+        neg_one_tensor,
+        y_train_len,
+        iterations,
+        index + 1
+    )
 }
 
 // Trains the machine learning model.
@@ -534,10 +551,9 @@ fn train(
     y_train_len: u32,
     iterations: u32
 ) -> (Tensor<FixedType>, FixedType, FixedType) {
-    let mut i = 1_u32;
-    let mut iter_w = *init_w;
+    let iter_w = init_w;
 
-    'LOOPING...'.print();
+    'Iterations'.print();
     iterations.print();
 
     let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
@@ -565,35 +581,25 @@ fn train(
         extra: Option::Some(extra),
     );
 
-    let mut initial_loss = FixedTrait::ZERO();
-    let mut final_loss = FixedTrait::ZERO();
+    let initial_loss = FixedTrait::ZERO();
+    let final_loss = FixedTrait::ZERO();
 
-    if iterations > 0_u32 {
-        initial_loss = calculate_loss(@iter_w, x, y, c, @one_tensor, @half_tensor, y_train_len);
-    };
+    let initial_loss = calculate_loss(init_w, x, y, @c, @one_tensor, @half_tensor, y_train_len);
 
-    loop {
-        if i > iterations {
-            break ();
-        }
+    let iter_w = train_step(
+        x,
+        y,
+        init_w,
+        learning_rate,
+        @one_tensor,
+        @half_tensor,
+        @neg_one_tensor,
+        y_train_len,
+        iterations,
+        1
+    );
 
-        let partial_loss = calculate_loss(@iter_w, x, y, c, @one_tensor, @half_tensor, y_train_len);
-
-        iter_w =
-            train_step(
-                x,
-                y,
-                ref iter_w,
-                learning_rate,
-                @one_tensor,
-                @half_tensor,
-                @neg_one_tensor,
-                y_train_len
-            );
-        i += 1;
-    };
-
-    final_loss = calculate_loss(@iter_w, x, y, c, @one_tensor, @half_tensor, y_train_len);
+    let final_loss = calculate_loss(@iter_w, x, y, @c, @one_tensor, @half_tensor, y_train_len);
 
     (iter_w, initial_loss, final_loss)
 }
@@ -616,11 +622,11 @@ use orion::numbers::fixed_point::{
     implementations::fp16x16::core::{FP16x16Impl, FP16x16Div, FP16x16PartialOrd, FP16x16Print, ONE}
 };
 
-use svm::{
+use verifiable_support_vector_machine::{
     generated::{X_train::X_train, Y_train::Y_train, X_test::X_test, Y_test::Y_test}, train::{train}
 };
 
-use svm::{helper::{pred, accuracy}};
+use verifiable_support_vector_machine::{helper::{pred, accuracy}};
 
 #[test]
 #[available_gas(99999999999999999)]
@@ -664,14 +670,6 @@ fn test() {
 
     let train_y_pred = pred(@x_train, @final_w);
     let average_train = accuracy(@train_y_pred, @y_train);
-
-    'Test completed'.print();
-    'final_loss'.print();
-    (final_loss.mag).print();
-    'average_pred accuracy'.print();
-    (average_pred.mag).print();
-    'average_train accuracy'.print();
-    (average_train.mag).print();
 
     assert(final_loss < initial_loss, 'No decrease in training loss');
     assert(average_pred > average_compare, 'It is better to flip a coin');

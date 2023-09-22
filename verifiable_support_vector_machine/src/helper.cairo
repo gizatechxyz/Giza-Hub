@@ -20,7 +20,7 @@ fn calculate_loss(
     w: @Tensor<FixedType>,
     x_train: @Tensor<FixedType>,
     y_train: @Tensor<FixedType>,
-    c: Tensor<FixedType>,
+    c: @Tensor<FixedType>,
     one_tensor: @Tensor<FixedType>,
     half_tensor: @Tensor<FixedType>,
     y_train_len: u32
@@ -38,14 +38,14 @@ fn calculate_loss(
     );
 
     let regularization_term = *half_tensor * (w.matmul(w));
-    let loss_tensor = mean_tensor + c * regularization_term;
+    let loss_tensor = mean_tensor + *c * regularization_term;
 
     loss_tensor.at(array![0].span())
 }
 
 // Calculates the gradient for the machine learning model
 fn calculate_gradient(
-    w: Tensor<FixedType>,
+    w: @Tensor<FixedType>,
     x_train: @Tensor<FixedType>,
     y_train: @Tensor<FixedType>,
     c: Tensor<FixedType>,
@@ -61,14 +61,13 @@ fn calculate_gradient(
         extra: Option::Some(extra),
     );
 
-    let mask = (*y_train * x_train.matmul(@w));
+    let mask = (*y_train * x_train.matmul(w));
     let mask = less(@mask, one_tensor);
 
-    let gradient = (((mask * *y_train).matmul(x_train) / tensor_size) * *neg_one_tensor) + (c * w);
+    let gradient = (((mask * *y_train).matmul(x_train) / tensor_size) * *neg_one_tensor) + (c * *w);
 
     gradient
 }
-
 
 // Calculates the accuracy of the machine learning model's predictions.
 fn accuracy(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> FixedType {
@@ -76,22 +75,18 @@ fn accuracy(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> FixedType {
 
     let mut right_data = *right.data;
     let mut left_data = *left.data;
-    let mut left_index = 0;
     let mut counter = 0;
 
     loop {
         match right_data.pop_front() {
             Option::Some(item) => {
                 let right_current_index = item;
-                let left_current_index = left_data[left_index];
-
-                let (y_value, z_value) = (left_current_index, right_current_index);
+                let left_current_index = left_data.pop_front();
+                let (y_value, z_value) = (left_current_index.unwrap(), right_current_index);
 
                 if *y_value == *z_value {
                     counter += 1;
                 };
-
-                left_index += 1;
             },
             Option::None(_) => {
                 break;

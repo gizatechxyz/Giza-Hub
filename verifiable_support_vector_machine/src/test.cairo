@@ -60,14 +60,6 @@ fn test() {
     let train_y_pred = pred(@x_train, @final_w);
     let average_train = accuracy(@train_y_pred, @y_train);
 
-    // 'Test completed'.print();
-    // 'final_loss'.print();
-    // (final_loss.mag).print();
-    // 'average_pred accuracy'.print();
-    // (average_pred.mag).print();
-    // 'average_train accuracy'.print();
-    // (average_train.mag).print();
-
     assert(final_loss < initial_loss, 'No decrease in training loss');
     assert(average_pred > average_compare, 'It is better to flip a coin');
     assert(average_train > average_compare, 'It was not a good training');
