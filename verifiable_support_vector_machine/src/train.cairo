@@ -2,42 +2,37 @@ use debug::PrintTrait;
 use traits::TryInto;
 use array::{ArrayTrait, SpanTrait};
 use orion::operators::tensor::{
-    core::{Tensor, TensorTrait, ExtraParams},
-    implementations::impl_tensor_fp::{
-        Tensor_fp, FixedTypeTensorAdd, FixedTypeTensorMul, FixedTypeTensorSub, FixedTypeTensorDiv
-    }
+    Tensor, TensorTrait, FP16x16Tensor, FP16x16TensorAdd, FP16x16TensorMul, FP16x16TensorSub,
+    FP16x16TensorDiv
 };
-use orion::numbers::fixed_point::{
-    core::{FixedTrait, FixedType, FixedImpl},
-    implementations::fp16x16::core::{
-        HALF, ONE, FP16x16Impl, FP16x16Div, FP16x16Print, FP16x16IntoI32
-    }
+use orion::numbers::{FixedTrait, FP16x16, FP16x16Impl};
+use orion::numbers::fixed_point::implementations::fp16x16::core::{
+    HALF, ONE, FP16x16Mul, FP16x16Div, FP16x16Print, FP16x16IntoI32, FP16x16PartialOrd,
+    FP16x16PartialEq
 };
 
 use verifiable_support_vector_machine::{helper::{calculate_loss, calculate_gradient}};
 
 // Performs a training step for each iteration during model training
 fn train_step(
-    x: @Tensor<FixedType>,
-    y: @Tensor<FixedType>,
-    w: @Tensor<FixedType>,
-    learning_rate: FixedType,
-    one_tensor: @Tensor<FixedType>,
-    half_tensor: @Tensor<FixedType>,
-    neg_one_tensor: @Tensor<FixedType>,
+    x: @Tensor<FP16x16>,
+    y: @Tensor<FP16x16>,
+    w: @Tensor<FP16x16>,
+    learning_rate: FP16x16,
+    one_tensor: @Tensor<FP16x16>,
+    half_tensor: @Tensor<FP16x16>,
+    neg_one_tensor: @Tensor<FP16x16>,
     y_train_len: u32,
     iterations: u32,
     index: u32
-) -> Tensor<FixedType> {
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
+) -> Tensor<FP16x16> {
     let learning_rate_tensor = TensorTrait::new(
-        shape: array![1].span(), data: array![learning_rate].span(), extra: Option::Some(extra),
+        shape: array![1].span(), data: array![learning_rate].span()
     );
 
     let c = TensorTrait::new(
         shape: array![1].span(),
         data: array![FP16x16Impl::ONE()].span(),
-        extra: Option::Some(extra),
     );
 
     let mut w_recursive = *w;
@@ -68,45 +63,40 @@ fn train_step(
 
 // Trains the machine learning model.
 fn train(
-    x: @Tensor<FixedType>,
-    y: @Tensor<FixedType>,
-    init_w: @Tensor<FixedType>,
-    learning_rate: FixedType,
+    x: @Tensor<FP16x16>,
+    y: @Tensor<FP16x16>,
+    init_w: @Tensor<FP16x16>,
+    learning_rate: FP16x16,
     y_train_len: u32,
     iterations: u32
-) -> (Tensor<FixedType>, FixedType, FixedType) {
+) -> (Tensor<FP16x16>, FP16x16, FP16x16) {
     let iter_w = init_w;
 
     'Iterations'.print();
     iterations.print();
 
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
     let c = TensorTrait::new(
         shape: array![1].span(),
         data: array![FP16x16Impl::ONE()].span(),
-        extra: Option::Some(extra),
     );
 
     let one_tensor = TensorTrait::new(
         shape: array![1].span(),
         data: array![FP16x16Impl::ONE()].span(),
-        extra: Option::Some(extra),
     );
 
     let half_tensor = TensorTrait::new(
         shape: array![1].span(),
         data: array![FixedTrait::new(HALF, false)].span(),
-        extra: Option::Some(extra),
     );
 
     let neg_one_tensor = TensorTrait::new(
         shape: array![1].span(),
         data: array![FixedTrait::new(ONE, true)].span(),
-        extra: Option::Some(extra),
     );
 
-    let initial_loss = FixedTrait::ZERO();
-    let final_loss = FixedTrait::ZERO();
+    let initial_loss = FixedTrait::<FP16x16>::ZERO();
+    let final_loss = FixedTrait::<FP16x16>::ZERO();
 
     let initial_loss = calculate_loss(init_w, x, y, @c, @one_tensor, @half_tensor, y_train_len);
 

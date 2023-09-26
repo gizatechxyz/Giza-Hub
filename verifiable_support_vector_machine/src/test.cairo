@@ -1,14 +1,13 @@
-use debug::PrintTrait;
+use traits::TryInto;
 use array::{ArrayTrait, SpanTrait};
 use orion::operators::tensor::{
-    core::{Tensor, TensorTrait, ExtraParams},
-    implementations::impl_tensor_fp::{
-        Tensor_fp, FixedTypeTensorMul, FixedTypeTensorSub, FixedTypeTensorDiv
-    }
+    Tensor, TensorTrait, FP16x16Tensor, FP16x16TensorAdd, FP16x16TensorMul, FP16x16TensorSub,
+    FP16x16TensorDiv
 };
-use orion::numbers::fixed_point::{
-    core::{FixedTrait, FixedType, FixedImpl},
-    implementations::fp16x16::core::{FP16x16Impl, FP16x16Div, FP16x16PartialOrd, FP16x16Print, ONE}
+use orion::numbers::{FixedTrait, FP16x16, FP16x16Impl};
+use orion::numbers::fixed_point::implementations::fp16x16::core::{
+    HALF, ONE, FP16x16Mul, FP16x16Div, FP16x16IntoI32, FP16x16PartialOrd,
+    FP16x16PartialEq
 };
 
 use verifiable_support_vector_machine::{
@@ -19,13 +18,11 @@ use verifiable_support_vector_machine::{helper::{pred, accuracy}};
 
 #[test]
 #[available_gas(99999999999999999)]
-fn test() {
+fn svm_test() {
     let x_train = X_train();
     let x_test = X_test();
     let y_train = Y_train();
     let y_test = Y_test();
-
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
 
     let feature_size = *x_train.shape[1];
 
@@ -46,7 +43,7 @@ fn test() {
     };
 
     let initial_w = TensorTrait::new(
-        shape: array![feature_size].span(), data: zero_array.span(), extra: Option::Some(extra),
+        shape: array![feature_size].span(), data: zero_array.span()
     );
 
     let y_train_len = y_train.data.len();

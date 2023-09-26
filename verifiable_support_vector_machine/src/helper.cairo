@@ -2,29 +2,25 @@ use debug::PrintTrait;
 use traits::TryInto;
 use array::{ArrayTrait, SpanTrait};
 use orion::operators::tensor::{
-    core::{Tensor, TensorTrait, ExtraParams},
-    implementations::impl_tensor_fp::{
-        Tensor_fp, FixedTypeTensorAdd, FixedTypeTensorMul, FixedTypeTensorSub, FixedTypeTensorDiv
-    }
+    Tensor, TensorTrait, FP16x16Tensor, FP16x16TensorAdd, FP16x16TensorMul, FP16x16TensorSub,
+    FP16x16TensorDiv
 };
-use orion::numbers::fixed_point::{
-    core::{FixedTrait, FixedType, FixedImpl},
-    implementations::fp16x16::core::{
-        HALF, ONE, FP16x16Impl, FP16x16Mul, FP16x16Div, FP16x16Print, FP16x16IntoI32,
-        FP16x16PartialOrd, FP16x16PartialEq
-    }
+use orion::numbers::{FixedTrait, FP16x16, FP16x16Impl};
+use orion::numbers::fixed_point::implementations::fp16x16::core::{
+    HALF, ONE, FP16x16Mul, FP16x16Div, FP16x16Print, FP16x16IntoI32, FP16x16PartialOrd,
+    FP16x16PartialEq
 };
 
 // Calculates the machine learning model's loss.
 fn calculate_loss(
-    w: @Tensor<FixedType>,
-    x_train: @Tensor<FixedType>,
-    y_train: @Tensor<FixedType>,
-    c: @Tensor<FixedType>,
-    one_tensor: @Tensor<FixedType>,
-    half_tensor: @Tensor<FixedType>,
+    w: @Tensor<FP16x16>,
+    x_train: @Tensor<FP16x16>,
+    y_train: @Tensor<FP16x16>,
+    c: @Tensor<FP16x16>,
+    one_tensor: @Tensor<FP16x16>,
+    half_tensor: @Tensor<FP16x16>,
     y_train_len: u32
-) -> FixedType {
+) -> FP16x16 {
     let tensor_size = FixedTrait::new_unscaled(y_train_len, false);
 
     let pre_cumsum = *one_tensor - *y_train * x_train.matmul(w);
@@ -32,9 +28,8 @@ fn calculate_loss(
     let sum = cumsum.data[pre_cumsum.data.len() - 1];
     let mean = FP16x16Div::div(*sum, tensor_size);
 
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
     let mean_tensor = TensorTrait::new(
-        shape: array![1].span(), data: array![mean].span(), extra: Option::Some(extra),
+        shape: array![1].span(), data: array![mean].span(),
     );
 
     let regularization_term = *half_tensor * (w.matmul(w));
@@ -45,20 +40,17 @@ fn calculate_loss(
 
 // Calculates the gradient for the machine learning model
 fn calculate_gradient(
-    w: @Tensor<FixedType>,
-    x_train: @Tensor<FixedType>,
-    y_train: @Tensor<FixedType>,
-    c: Tensor<FixedType>,
-    one_tensor: @Tensor<FixedType>,
-    neg_one_tensor: @Tensor<FixedType>,
+    w: @Tensor<FP16x16>,
+    x_train: @Tensor<FP16x16>,
+    y_train: @Tensor<FP16x16>,
+    c: Tensor<FP16x16>,
+    one_tensor: @Tensor<FP16x16>,
+    neg_one_tensor: @Tensor<FP16x16>,
     y_train_len: u32
-) -> Tensor<FixedType> {
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
-
+) -> Tensor<FP16x16> {
     let tensor_size = TensorTrait::new(
         shape: array![1].span(),
         data: array![FixedTrait::new_unscaled(y_train_len, false)].span(),
-        extra: Option::Some(extra),
     );
 
     let mask = (*y_train * x_train.matmul(w));
@@ -70,7 +62,7 @@ fn calculate_gradient(
 }
 
 // Calculates the accuracy of the machine learning model's predictions.
-fn accuracy(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> FixedType {
+fn accuracy(y: @Tensor<FP16x16>, z: @Tensor<FP16x16>) -> FP16x16 {
     let (mut left, mut right) = (y, z);
 
     let mut right_data = *right.data;
@@ -99,9 +91,9 @@ fn accuracy(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> FixedType {
 }
 
 // Returns the truth value of (x < y) element-wise.
-fn less(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> Tensor<FixedType> {
-    let mut data_result = ArrayTrait::<FixedType>::new();
-    let mut data_result2 = ArrayTrait::<FixedType>::new();
+fn less(y: @Tensor<FP16x16>, z: @Tensor<FP16x16>) -> Tensor<FP16x16> {
+    let mut data_result = ArrayTrait::<FP16x16>::new();
+    let mut data_result2 = ArrayTrait::<FP16x16>::new();
     let (mut smaller, mut bigger, retains_input_order) = if (*y.data).len() < (*z.data).len() {
         (y, z, true)
     } else {
@@ -138,13 +130,13 @@ fn less(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> Tensor<FixedType> {
         };
     };
 
-    return TensorTrait::<FixedType>::new(*bigger.shape, data_result.span(), *y.extra);
+    return TensorTrait::<FP16x16>::new(*bigger.shape, data_result.span());
 }
 
 
 // Returns an element-wise indication of the sign of a number.
-fn sign(z: @Tensor<FixedType>) -> Tensor<FixedType> {
-    let mut data_result = ArrayTrait::<FixedType>::new();
+fn sign(z: @Tensor<FP16x16>) -> Tensor<FP16x16> {
+    let mut data_result = ArrayTrait::<FP16x16>::new();
     let mut z_data = *z.data;
 
     loop {
@@ -163,10 +155,10 @@ fn sign(z: @Tensor<FixedType>) -> Tensor<FixedType> {
         };
     };
 
-    TensorTrait::<FixedType>::new(*z.shape, data_result.span(), *z.extra)
+    TensorTrait::<FP16x16>::new(*z.shape, data_result.span())
 }
 
 // Returns predictions using the machine learning model.
-fn pred(x: @Tensor<FixedType>, w: @Tensor<FixedType>) -> Tensor<FixedType> {
+fn pred(x: @Tensor<FP16x16>, w: @Tensor<FP16x16>) -> Tensor<FP16x16> {
     sign(@(x.matmul(w)))
 }
