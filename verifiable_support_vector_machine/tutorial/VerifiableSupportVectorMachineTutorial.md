@@ -201,20 +201,19 @@ def generate_cairo_files(data, name):
     with open(os.path.join('src', 'generated', f"{name}.cairo"), "w") as f:
         f.write(
             "use array::ArrayTrait;\n" +
-            "use orion::operators::tensor::{core::{Tensor, TensorTrait, ExtraParams}, implementations::impl_tensor_fp::Tensor_fp};\n" +
-            "use orion::numbers::fixed_point::{core::{FixedTrait, FixedType, FixedImpl}, implementations::fp16x16::core::FP16x16Impl};\n" +
-            "\n" + f"fn {name}() -> Tensor<FixedType>" + "{\n\n" + 
+            "use orion::operators::tensor::{Tensor, TensorTrait, FP16x16Tensor};\n" +
+            "use orion::numbers::{FixedTrait, FP16x16, FP16x16Impl};\n" +
+            "\n" + f"fn {name}() -> Tensor<FP16x16>" + "{\n\n" + 
             "let mut shape = ArrayTrait::new();\n"
         )
         for dim in data.shape:
             f.write(f"shape.append({dim});\n")
-  
+    
         f.write("let mut data = ArrayTrait::new();")
         for val in np.nditer(data.flatten()):
             f.write(f"data.append(FixedTrait::new({abs(int(decimal_to_fp16x16(val)))}, {str(val < 0).lower()}));\n")
         f.write(
-            "let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };\n" + 
-            "let tensor = TensorTrait::<FixedType>::new(shape.span(), data.span(), Option::Some(extra));\n" +
+            "let tensor = TensorTrait::<FP16x16>::new(shape.span(), data.span());\n" +
             "return tensor;\n}"
         )
 
@@ -242,62 +241,49 @@ mod helper;
 This will tell our compiler to include the separate modules listed above during the compilation of our code. We will be covering each module in detail in the following section, but let’s first review the generated folder files.
 
 ```rust
-use array::ArrayTrait;
-use orion::operators::tensor::{
-    core::{Tensor, TensorTrait, ExtraParams}, implementations::impl_tensor_fp::Tensor_fp
-};
-use orion::numbers::fixed_point::{
-    core::{FixedTrait, FixedType, FixedImpl}, implementations::fp16x16::core::FP16x16Impl
-};
+    use array::ArrayTrait;
+    use orion::operators::tensor::{Tensor, TensorTrait, FP16x16Tensor};
+    use orion::numbers::{FixedTrait, FP16x16, FP16x16Impl};
 
-fn X_train() -> Tensor<FixedType> {
+    fn X_train() -> Tensor<FP16x16>{
+
     let mut shape = ArrayTrait::new();
     shape.append(100);
     shape.append(3);
     let mut data = ArrayTrait::new();
 
-// data has been truncated (only showing the first 5 values out of the 100 values)
+    // data has been truncated (only showing the first 5 values out of the 100 values)
 
     data.append(FixedTrait::new(165613, false));
     data.append(FixedTrait::new(40488, false));
     data.append(FixedTrait::new(65536, false));
     data.append(FixedTrait::new(101228, false));
     data.append(FixedTrait::new(275957, false));
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
-    let tensor = TensorTrait::<FixedType>::new(shape.span(), data.span(), Option::Some(extra));
+    let tensor = TensorTrait::<FixedType>::new(shape.span(), data.span());
     return tensor;
 }
 ```
 
-Since Cairo does not come with built-in signed integers we have to explicitly define it for our X and y values. Luckily, this is already implemented in Orion for us as a struct as shown below:
+Since Cairo does not come with built-in fixed points we have to explicitly define it for our X and y values. Luckily, this is already implemented in Orion for us as a struct as shown below:
 
 ```rust
-// Example of a FixedType.
+// Example of a FP16x16.
 struct FP16x16 {
     mag: u32,
     sign: bool
 }
 ```
 
-For this tutorial, we will use FixedType numbers where the magnitude represents the absolute value and the boolean indicates whether the number is negative or positive. To replicate the key functions of SVM, we will conduct our operations using  FixedType Tensors which are also represented as a structs in Orion.
+For this tutorial, we will use fixed point numbers FP16x16 where the magnitude represents the absolute value and the boolean indicates whether the number is negative or positive. In a 16x16 fixed-point format, there are 16 bits dedicated to the integer part of the number and 16 bits for the fractional part of the number. This format allows us to work with a wide range of values and a high degree of precision for conducting the Tensor operations. To replicate the key functions of SVM, we will conduct our operations using FP16x16 Tensors which are also represented as a structs in Orion.
 
 ```rust
 struct Tensor<T> {
     shape: Span<usize>,
     data: Span<T>
-    extra: Option<ExtraParams>
-}
-
-struct ExtraParams {
-    fixed_point: Option<FixedImpl>
 }
 ```
 
-A `Tensor` in Orion takes a shape, a span array of the data and an extra parameter. For our tutorial, the ExtraParams specifies that the Tensor is associated with using fp16x16 format.  In a 16x16 fixed-point format, there are 16 bits dedicated to the integer part of the number and 16 bits for the fractional part of the number. This format allows us to work with a wide range of values and a high degree of precision for conducting the Tensor operations.
-
-```rust
-let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
-```
+A `Tensor` in Orion takes a shape and a span array of the data.
 
 ## Implementing SVM models using Orion
 
@@ -307,14 +293,14 @@ At this stage, we will be reproducing the SVM functions now that we have generat
 
 ```rust
 fn calculate_loss(
-    w: @Tensor<FixedType>,
-    x_train: @Tensor<FixedType>,
-    y_train: @Tensor<FixedType>,
-    c: @Tensor<FixedType>,
-    one_tensor: @Tensor<FixedType>,
-    half_tensor: @Tensor<FixedType>,
+    w: @Tensor<FP16x16>,
+    x_train: @Tensor<FP16x16>,
+    y_train: @Tensor<FP16x16>,
+    c: @Tensor<FP16x16>,
+    one_tensor: @Tensor<FP16x16>,
+    half_tensor: @Tensor<FP16x16>,
     y_train_len: u32
-) -> FixedType {
+) -> FP16x16 {
     let tensor_size = FixedTrait::new_unscaled(y_train_len, false);
 
     let pre_cumsum = *one_tensor - *y_train * x_train.matmul(w);
@@ -322,9 +308,8 @@ fn calculate_loss(
     let sum = cumsum.data[pre_cumsum.data.len() - 1];
     let mean = FP16x16Div::div(*sum, tensor_size);
 
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
     let mean_tensor = TensorTrait::new(
-        shape: array![1].span(), data: array![mean].span(), extra: Option::Some(extra),
+        shape: array![1].span(), data: array![mean].span(),
     );
 
     let regularization_term = *half_tensor * (w.matmul(w));
@@ -332,27 +317,23 @@ fn calculate_loss(
 
     loss_tensor.at(array![0].span())
 }
-
 ```
 
 ### Calculate the gradient of our loss function
 
 ```rust
 fn calculate_gradient(
-    w: @Tensor<FixedType>,
-    x_train: @Tensor<FixedType>,
-    y_train: @Tensor<FixedType>,
-    c: Tensor<FixedType>,
-    one_tensor: @Tensor<FixedType>,
-    neg_one_tensor: @Tensor<FixedType>,
+    w: @Tensor<FP16x16>,
+    x_train: @Tensor<FP16x16>,
+    y_train: @Tensor<FP16x16>,
+    c: Tensor<FP16x16>,
+    one_tensor: @Tensor<FP16x16>,
+    neg_one_tensor: @Tensor<FP16x16>,
     y_train_len: u32
-) -> Tensor<FixedType> {
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
-
+) -> Tensor<FP16x16> {
     let tensor_size = TensorTrait::new(
         shape: array![1].span(),
         data: array![FixedTrait::new_unscaled(y_train_len, false)].span(),
-        extra: Option::Some(extra),
     );
 
     let mask = (*y_train * x_train.matmul(w));
@@ -368,7 +349,7 @@ Additionally, within the helper file, we have the following functions implemente
 
 ```rust
 // Calculates the accuracy of the machine learning model's predictions.
-fn accuracy(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> FixedType {
+fn accuracy(y: @Tensor<FP16x16>, z: @Tensor<FP16x16>) -> FP16x16 {
     let (mut left, mut right) = (y, z);
 
     let mut right_data = *right.data;
@@ -397,10 +378,9 @@ fn accuracy(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> FixedType {
 }
 
 // Returns the truth value of (x < y) element-wise.
-fn less(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> Tensor<FixedType> {
-
-    let mut data_result = ArrayTrait::<FixedType>::new();
-    let mut data_result2 = ArrayTrait::<FixedType>::new();
+fn less(y: @Tensor<FP16x16>, z: @Tensor<FP16x16>) -> Tensor<FP16x16> {
+    let mut data_result = ArrayTrait::<FP16x16>::new();
+    let mut data_result2 = ArrayTrait::<FP16x16>::new();
     let (mut smaller, mut bigger, retains_input_order) = if (*y.data).len() < (*z.data).len() {
         (y, z, true)
     } else {
@@ -437,13 +417,12 @@ fn less(y: @Tensor<FixedType>, z: @Tensor<FixedType>) -> Tensor<FixedType> {
         };
     };
 
-    return TensorTrait::<FixedType>::new(*bigger.shape, data_result.span(), *y.extra);
+    return TensorTrait::<FP16x16>::new(*bigger.shape, data_result.span());
 }
 
-
 // Returns an element-wise indication of the sign of a number.
-fn sign(z: @Tensor<FixedType>) -> Tensor<FixedType> {
-    let mut data_result = ArrayTrait::<FixedType>::new();
+fn sign(z: @Tensor<FP16x16>) -> Tensor<FP16x16> {
+    let mut data_result = ArrayTrait::<FP16x16>::new();
     let mut z_data = *z.data;
 
     loop {
@@ -462,11 +441,11 @@ fn sign(z: @Tensor<FixedType>) -> Tensor<FixedType> {
         };
     };
 
-    TensorTrait::<FixedType>::new(*z.shape, data_result.span(), *z.extra)
+    TensorTrait::<FP16x16>::new(*z.shape, data_result.span())
 }
 
 // Returns predictions using the machine learning model.
-fn pred(x: @Tensor<FixedType>, w: @Tensor<FixedType>) -> Tensor<FixedType> {
+fn pred(x: @Tensor<FP16x16>, w: @Tensor<FP16x16>) -> Tensor<FP16x16> {
     sign(@(x.matmul(w)))
 }
 ```
@@ -475,45 +454,41 @@ Finally, our train.cairo file implements model training using the functions desc
 executed as part of our model tests.
 
 ```rust
+use debug::PrintTrait;
 use traits::TryInto;
 use array::{ArrayTrait, SpanTrait};
 use orion::operators::tensor::{
-    core::{Tensor, TensorTrait, ExtraParams},
-    implementations::impl_tensor_fp::{
-        Tensor_fp, FixedTypeTensorAdd, FixedTypeTensorMul, FixedTypeTensorSub, FixedTypeTensorDiv
-    }
+    Tensor, TensorTrait, FP16x16Tensor, FP16x16TensorAdd, FP16x16TensorMul, FP16x16TensorSub,
+    FP16x16TensorDiv
 };
-use orion::numbers::fixed_point::{
-    core::{FixedTrait, FixedType, FixedImpl},
-    implementations::fp16x16::core::{
-        HALF, ONE, FP16x16Impl, FP16x16Div, FP16x16Print, FP16x16IntoI32
-    }
+use orion::numbers::{FixedTrait, FP16x16, FP16x16Impl};
+use orion::numbers::fixed_point::implementations::fp16x16::core::{
+    HALF, ONE, FP16x16Mul, FP16x16Div, FP16x16Print, FP16x16IntoI32, FP16x16PartialOrd,
+    FP16x16PartialEq
 };
 
 use verifiable_support_vector_machine::{helper::{calculate_loss, calculate_gradient}};
 
 // Performs a training step for each iteration during model training
 fn train_step(
-    x: @Tensor<FixedType>,
-    y: @Tensor<FixedType>,
-    w: @Tensor<FixedType>,
-    learning_rate: FixedType,
-    one_tensor: @Tensor<FixedType>,
-    half_tensor: @Tensor<FixedType>,
-    neg_one_tensor: @Tensor<FixedType>,
+    x: @Tensor<FP16x16>,
+    y: @Tensor<FP16x16>,
+    w: @Tensor<FP16x16>,
+    learning_rate: FP16x16,
+    one_tensor: @Tensor<FP16x16>,
+    half_tensor: @Tensor<FP16x16>,
+    neg_one_tensor: @Tensor<FP16x16>,
     y_train_len: u32,
     iterations: u32,
     index: u32
-) -> Tensor<FixedType> {
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
+) -> Tensor<FP16x16> {
     let learning_rate_tensor = TensorTrait::new(
-        shape: array![1].span(), data: array![learning_rate].span(), extra: Option::Some(extra),
+        shape: array![1].span(), data: array![learning_rate].span()
     );
 
     let c = TensorTrait::new(
         shape: array![1].span(),
         data: array![FP16x16Impl::ONE()].span(),
-        extra: Option::Some(extra),
     );
 
     let mut w_recursive = *w;
@@ -544,45 +519,40 @@ fn train_step(
 
 // Trains the machine learning model.
 fn train(
-    x: @Tensor<FixedType>,
-    y: @Tensor<FixedType>,
-    init_w: @Tensor<FixedType>,
-    learning_rate: FixedType,
+    x: @Tensor<FP16x16>,
+    y: @Tensor<FP16x16>,
+    init_w: @Tensor<FP16x16>,
+    learning_rate: FP16x16,
     y_train_len: u32,
     iterations: u32
-) -> (Tensor<FixedType>, FixedType, FixedType) {
+) -> (Tensor<FP16x16>, FP16x16, FP16x16) {
     let iter_w = init_w;
 
     'Iterations'.print();
     iterations.print();
 
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
     let c = TensorTrait::new(
         shape: array![1].span(),
         data: array![FP16x16Impl::ONE()].span(),
-        extra: Option::Some(extra),
     );
 
     let one_tensor = TensorTrait::new(
         shape: array![1].span(),
         data: array![FP16x16Impl::ONE()].span(),
-        extra: Option::Some(extra),
     );
 
     let half_tensor = TensorTrait::new(
         shape: array![1].span(),
         data: array![FixedTrait::new(HALF, false)].span(),
-        extra: Option::Some(extra),
     );
 
     let neg_one_tensor = TensorTrait::new(
         shape: array![1].span(),
         data: array![FixedTrait::new(ONE, true)].span(),
-        extra: Option::Some(extra),
     );
 
-    let initial_loss = FixedTrait::ZERO();
-    let final_loss = FixedTrait::ZERO();
+    let initial_loss = FixedTrait::<FP16x16>::ZERO();
+    let final_loss = FixedTrait::<FP16x16>::ZERO();
 
     let initial_loss = calculate_loss(init_w, x, y, @c, @one_tensor, @half_tensor, y_train_len);
 
@@ -610,16 +580,16 @@ fn train(
 Now that we have implemented all the necessary functions for SVM, we can finally test our classification model. We begin by creating a new separate test file named `test.cairo` and import all the necessary Orion libraries, including our X values and y values (train and test) found in the generated folder. We also import all the key functions for SVM from the `helper.cairo` file, as we will rely on them to construct the model.
 
 ```rust
+use traits::TryInto;
 use array::{ArrayTrait, SpanTrait};
 use orion::operators::tensor::{
-    core::{Tensor, TensorTrait, ExtraParams},
-    implementations::impl_tensor_fp::{
-        Tensor_fp, FixedTypeTensorMul, FixedTypeTensorSub, FixedTypeTensorDiv
-    }
+    Tensor, TensorTrait, FP16x16Tensor, FP16x16TensorAdd, FP16x16TensorMul, FP16x16TensorSub,
+    FP16x16TensorDiv
 };
-use orion::numbers::fixed_point::{
-    core::{FixedTrait, FixedType, FixedImpl},
-    implementations::fp16x16::core::{FP16x16Impl, FP16x16Div, FP16x16PartialOrd, FP16x16Print, ONE}
+use orion::numbers::{FixedTrait, FP16x16, FP16x16Impl};
+use orion::numbers::fixed_point::implementations::fp16x16::core::{
+    HALF, ONE, FP16x16Mul, FP16x16Div, FP16x16IntoI32, FP16x16PartialOrd,
+    FP16x16PartialEq
 };
 
 use verifiable_support_vector_machine::{
@@ -630,13 +600,11 @@ use verifiable_support_vector_machine::{helper::{pred, accuracy}};
 
 #[test]
 #[available_gas(99999999999999999)]
-fn test() {
+fn svm_test() {
     let x_train = X_train();
     let x_test = X_test();
     let y_train = Y_train();
     let y_test = Y_test();
-
-    let extra = ExtraParams { fixed_point: Option::Some(FixedImpl::FP16x16(())) };
 
     let feature_size = *x_train.shape[1];
 
@@ -657,7 +625,7 @@ fn test() {
     };
 
     let initial_w = TensorTrait::new(
-        shape: array![feature_size].span(), data: zero_array.span(), extra: Option::Some(extra),
+        shape: array![feature_size].span(), data: zero_array.span()
     );
 
     let y_train_len = y_train.data.len();
@@ -677,7 +645,7 @@ fn test() {
 }
 ```
 
-Our model will be tested using the `test()` function, which will follow these steps:
+Our model will be tested using the `svm_test()` function, which will follow these steps:
 
 1. Data Retrieval : The function starts by fetching the feature values X_train and y_train with their labels, both sourced from the generated folder.
 4. SVM Construction : Once we have the data, we proceed to train our Support Vector Machine using the X_train and y_train values, in line with the functions calculated for this purpose.
@@ -698,3 +666,7 @@ test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out;
 ```
 
 And as we can our test cases have passed! 👏
+
+If you've made it this far, well done! You are now capable of building verifiable ML models, making them ever more reliable and transparent than ever before. 
+
+We invite the community to join us in forging a future in making AI transparent and reliable resource for all.

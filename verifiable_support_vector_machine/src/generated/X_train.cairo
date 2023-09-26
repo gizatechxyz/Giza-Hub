@@ -7,7 +7,8 @@ fn X_train() -> Tensor<FP16x16>{
 let mut shape = ArrayTrait::new();
 shape.append(100);
 shape.append(3);
-let mut data = ArrayTrait::new();data.append(FixedTrait::new(165613, false));
+let mut data = ArrayTrait::new();
+data.append(FixedTrait::new(165613, false));
 data.append(FixedTrait::new(40488, false));
 data.append(FixedTrait::new(65536, false));
 data.append(FixedTrait::new(101228, false));
