@@ -4,10 +4,10 @@ Orion is an open-source framework explicitly designed for the development of Pro
 
 The following tutorial will be a short guide on how we can utilise the Orion framework to implement our very first fully Verifiable Linear Regression Model in Cairo.
 
-This will enable us to add an extra layer of transparency to our model, ensuring each inference can be verified as weel as all the steps executed during the model’s construction phase.
+This will enable us to add an extra layer of transparency to our model, ensuring each inference can be verified as well as all the steps executed during the model’s construction phase.
 
 Content overview: 
-1. [Simple Linear Regression with Python:](VerifiableLinearRegressionModelTutorial.md#simple-linear-regression-with-python)Our starting point is a basic implementation of Simple Linear Regression model using the Ordinary Least Squares (OLS) method in Python.
+1. [Simple Linear Regression with Python:](VerifiableLinearRegressionModelTutorial.md#simple-linear-regression-with-python) Our starting point is a basic implementation of Simple Linear Regression model using the Ordinary Least Squares (OLS) method in Python.
 2. [Transitioning to Cairo:](VerifiableLinearRegressionModelTutorial.md#transitioning-to-cairo) In the subsequent stage, we will create a new scarb project and replicate our model to Cairo which is a language for creating STARK-provable programs.
 3. [Implementing OLS functions using Orion:](VerifiableLinearRegressionModelTutorial.md#implementing-ols-functions-using-orion) To catalyse our development process we will utilise the Orion Framework to construct the OLS functions to build our Verifiable Linear Regression model. 
 
@@ -161,7 +161,7 @@ Now that we have a good understanding of the OLS functions used, we will replica
 
 
 ### Creating a new scarb project
-Scarb is the Cairo package manager specifically created to streamline our Cairo and Starknet development process. Scarb will typically manage project dependencies, the compilation process (both pure Cairo and Starknet contracts), downloading and building external libraries to accelerate our development with Orion.You can find all information about Scarb and Cairo installation [here](../../framework/get-started.md#installations). 
+Scarb is the Cairo package manager specifically created to streamline our Cairo and Starknet development process. Scarb will typically manage project dependencies, the compilation process (both pure Cairo and Starknet contracts), downloading and building external libraries to accelerate our development with Orion. You can find all the information about Scarb and Cairo installation [here](../../framework/get-started.md#installations). 
 
 To create a new Scarb project, open your terminal and run:
 
@@ -186,7 +186,7 @@ orion = { git = "https://github.com/gizatechxyz/orion.git", branch = "einsum-imp
 test = "scarb cairo-test -f linear_regression_test"
 
 ```
-### Gerating the dataset in Cairo
+### Generating the dataset in Cairo
 Now let’s generate the files required to begin our transition to Cairo. In our Jupyter Notebook, we will execute the code required to turn our synthetic dataset to fixed point values and represent our X and y values as Fixedpoint Tensors in Orion.
 
 ```python
