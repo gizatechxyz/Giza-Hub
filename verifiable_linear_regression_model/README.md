@@ -5,9 +5,9 @@ Transitioning from Python's simplicity to Cairo's powerful capabilities utilisin
 
 2) <b>Transition to Cairo</b>: In the subsequent phase, we replicate the model to Cairo which is a language for creating STARK-provable programs.
 
-3) <b>Utilisation of Orion framework </b>: Orion is an Open-source Framework for Validity and ZKML which will enable us to catalyse our development in building verifiable Machine Learning models using STARKS. 
+3) <b>Utilisation of Orion framework</b>: Orion is an Open-source Framework for Validity and ZKML which will enable us to catalyse our development in building verifiable Machine Learning models using STARKS. 
 
-With the utilisation of Cairo and the Orion Framwork, we're not just executing computations but making them verifiable. It means every inference and step in our model construction and prediction can be validated, offering unparalleled transparency and trustworthiness to our model. 
+With the utilisation of Cairo and the Orion Framework, we're not just executing computations but making them verifiable. It means every inference and step in our model construction and prediction can be validated, offering unparalleled transparency and trustworthiness to our model. 
 
 ### Tip
 Start with the notebook folder to recap OLS functions and then move over to the src folder for the Cairo & Orion implementations 😁

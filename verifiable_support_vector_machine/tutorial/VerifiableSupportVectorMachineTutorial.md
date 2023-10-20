@@ -162,7 +162,7 @@ Now that we have a good understanding of the SVM models and their key functions,
 
 ### Create a new Scarb project
 
-Scarb is the Cairo package manager specifically created to streamline our Cairo and Starknet development process. Scarb will typically manage project dependencies, the compilation process (both pure Cairo and Starknet contracts), downloading and building external libraries to accelerate our development with Orion.You can find all information about Scarb and Cairo installation [here](../../framework/get-started.md#installations).
+Scarb is the Cairo package manager specifically created to streamline our Cairo and Starknet development process. Scarb will typically manage project dependencies, the compilation process (both pure Cairo and Starknet contracts), downloading and building external libraries to accelerate our development with Orion. You can find all the information about Scarb and Cairo installation [here](../../framework/get-started.md#installations).
 
 To create a new Scarb project, open your terminal and run:
 
@@ -181,7 +181,7 @@ version = "0.1.0"
 orion = { git = "https://github.com/gizatechxyz/orion.git", rev = "v0.1.0" }
 ```
 
-### Gerating the dataset in Cairo
+### Generating the dataset in Cairo
 
 Now let's generate the necessary files to begin our transition to Cairo. In our Jupyter Notebook, we'll run the necessary code to convert our dataset obtained with make_blobs from Scikit-learn into fixed-point values and represent our X_train, y_train, X_test, and y_test values as fixed-point tensors in Orion.
 
