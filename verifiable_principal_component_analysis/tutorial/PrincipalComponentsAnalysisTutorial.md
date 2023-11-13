@@ -49,7 +49,6 @@ The Jacobi algorithm is an iterative method for finding the eigenvalues and eige
 
 ```python
 def extract_diagonal(matrix):
-    #Extrae diagonal de matriz
     return [matrix[i][i] for i in range(len(matrix))]
 ```
 
@@ -253,8 +252,8 @@ ax.set_xlabel('Principal Component 1', fontsize = 15)
 ax.set_ylabel('Principal Component 2', fontsize = 15)
 ax.set_title('First two Components of PCA', fontsize = 20)
 
-targets = [0, 1, 2]  # These are the numerical codes for setosa, versicolor, and virginica , 2
-names = ['setosa', 'versicolor','virginica']  # This is just for the legend
+targets = [0, 1, 2]
+names = ['setosa', 'versicolor','virginica']
 colors = ['r', 'g', 'b'] 
 for target, color, name in zip(targets, colors, names):
     indicesToKeep = y == target
@@ -300,7 +299,7 @@ orion = { git = "https://github.com/gizatechxyz/orion.git", rev = "v0.1.7" }
 
 ### Gerating the dataset in Cairo
 
-Now let's generate the necessary files to begin our transition to Cairo. In our Jupyter Notebook, we'll run the necessary code to convert our iris dataset obtained from sklearn.datasets into fixed-point values and represent our X, X_std and y values as fixed-point tensors in Orion.
+Now let's generate the necessary files to begin our transition to Cairo. In our Jupyter Notebook, we will run the necessary code to convert our iris dataset obtained from sklearn.datasets into fixed point values and represent our X, and y values as fixed point tensors in Orion. For the purposes of the tutorial, we will work directly with the Xstd data obtained from python, so we will also convert these to fixed point values. 
 
 ```python
 import os
@@ -380,7 +379,7 @@ fn X_std() -> Tensor<FP16x16> {
 }
 ```
 
-Since Cairo does not come with built-in fixed points we have to explicitly define it for our X and y values. Luckily, this is already implemented in Orion for us as a struct as shown below:
+Since Cairo does not come with built-in fixed points we have to explicitly define it for our X, y and Xstd values. Luckily, this is already implemented in Orion for us as a struct as shown below:
 
 
 ```rust
@@ -404,7 +403,7 @@ A `Tensor` in Orion takes a shape and a span array of the data.
 
 ## Implementing PCA using Orion
 
-At this stage, we will be reproducing the Principal component analysis functions now that we have generated our X and Y Fixedpoint Tensors. We will begin by creating a separate file for our PCA functions file named `helper.cairo` to host all of our core functions.
+At this stage, we will be reproducing the Principal component analysis functions now that we have generated our X, y and Xstd Fixedpoint Tensors. We will begin by creating a separate file for our PCA functions file named `helper.cairo` to host all of our core functions.
 
 ### PCA Core functions
 
@@ -736,7 +735,7 @@ evalu_ord = np.sort(evalu_from_cairo)[::-1]
 
 ### Testing the model
 
-Now that we have implemented all the necessary functions for PCA, we can finally test our classification model. We begin by creating a new separate test file named `test.cairo` and import all the necessary Orion libraries, including our X values and y values found in the generated folder. We also import all the key functions for PCA from the `helper.cairo` file, as we will rely on them to construct the model.
+Now that we have implemented all the necessary functions for PCA, we can finally test our dimensionality reduction algorithm. We begin by creating a new separate test file named `test.cairo` and import all the necessary Orion libraries, including our X values and y and Xstd values found in the generated folder. We also import all the key functions for PCA from the `helper.cairo` file, as we will rely on them to construct the model.
 
 ```rust
 #[cfg(test)]
@@ -819,7 +818,7 @@ mod tests {
         let pc = (*evalu_div_sum.data.at(0) + *evalu_div_sum.data.at(1))
             * FixedTrait::<FP16x16>::new_unscaled(100, false);
         
-        assert(FixedTrait::round(pc).mag == 0x610000, 'wrong variability of the data'); //  0x610000 == 97
+        assert(FixedTrait::round(pc).mag == 0x610000, 'no match with notebook version'); //  0x610000 == 97
 
     }
 }
@@ -828,10 +827,11 @@ mod tests {
 Our model will be tested using the `pca_test()` function, which will follow these steps:
 
 1. Data retrieval: The function starts by obtaining the X and y feature values with their labels, both coming from the generated folder.
-2. Construction of correlation matrix: Once we have the data, we proceed to calculate our correlation matrix on the standardized data, using the values of X, according to the ones calculated for that purpose.
+2. Construction of correlation matrix: Once we have the data, we proceed to calculate our correlation matrix on the standardized X data.
 3. Determination of eigenvalues and eigenvectors : After running the jacobi_eigensystem function, we obtain our jacobi_eigensystem eigenvalues and eigenvectors.
 4. PC identification phase : In this phase, we express the PCs as a linear combination of the original variables.
-5. Determination of the number of PCs to be retained : At this point, we evaluate according to the variability captured by each PC, the number of principal components to be retained.
+5. Orthogonality: Once the PCs are obtained, we validate the orthogonality between them.
+6. Determination of the number of PCs to be retained : At this point, we evaluate according to the variability captured by each PC, the number of principal components to be retained.
 
 Finally, we can execute the test file by running `scarb test`
 
