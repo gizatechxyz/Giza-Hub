@@ -79,7 +79,7 @@ mod tests {
             * FixedTrait::<FP16x16>::new_unscaled(100, false);
 
         assert(
-            FixedTrait::round(pc).mag == 0x610000, 'wrong variability of the data'
+            FixedTrait::round(pc).mag == 0x610000, 'no match with notebook version'
         ); //  0x610000 == 97
     }
 }
