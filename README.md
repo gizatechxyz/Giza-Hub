@@ -1,12 +1,16 @@
-# Welcome to Orion Tutorials
+# Welcome to Orion Hub
 
-`gizatechxyz/orion_tutorials` is a repository showcasing examples of using [Orion](https://github.com/gizatechxyz/orion). The aim is to curate brief, high-quality examples with minimal or no dependencies. These examples should be significantly different from each other, providing valuable models that can be incorporated into your existing work.
+A curated list of models built with [Orion](https://github.com/gizatechxyz/orion).
 
-## Tutorials
+## Models
 
-- [MNIST Classification with Feedforward Neural Network](./mnist_nn/QAT_MNIST_MLP.ipynb)
-- [Verifiable Linear Regression Model](./verifiable_linear_regression_model/notebooks/verifiable_simple_linear_regression_model.ipynb)
-- [Verifiable Support Vector Machine](./verifiable_support_vector_machine/notebooks/)
+### Basics
+- [MNIST Classification with Feedforward Neural Network](basic/mnist_nn)
+- [Verifiable Linear Regression Model](basic/verifiable_linear_regression_model)
+- [Verifiable Support Vector Machine](basic/verifiable_support_vector_machine)
+
+### Gaming
+- [Tic-Tac-Toe Game AI Agent](gaming/tic_tac_toe)
 
 ## Learn the basics
 
