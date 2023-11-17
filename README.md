@@ -12,6 +12,9 @@ A curated list of models built with [Orion](https://github.com/gizatechxyz/orion
 ### Gaming
 - [Tic-Tac-Toe Game AI Agent](gaming/tic_tac_toe)
 
+### Finance
+- [Verifiable Principal Components Analysis](finance/verifiable_principal_component_analysis)
+
 ## Learn the basics
 
 Familiarize yourself with Orion concepts and modules. How to build your own neural networks and perform inference.
