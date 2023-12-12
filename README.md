@@ -10,6 +10,9 @@ A curated list of models built with [Orion](https://github.com/gizatechxyz/orion
 - [Verifiable Support Vector Machine](basic/verifiable_support_vector_machine)
 - [Verifiable Principal Components Analysis](basic/verifiable_principal_component_analysis)
 
+### Finance
+- [Closed-Form Multiple Linear Regression: Forecasting AAVE's Lifetime Repayment metrics](finance/provable_multiple_linear_regression_solver)
+
 ### Gaming
 - [Tic-Tac-Toe Game AI Agent](gaming/tic_tac_toe)
 
