@@ -54,6 +54,6 @@ r_squared_score.print();
 ```
 ### Tutorial walkthroughs
 To provide a deeper understanding of how the MLR solver works several notebook tutorials have been implemented as a walkthrough example 😁. Some of the examples include:
-- [Forecasting AAVE's WETH Pool Lifetime Repayments](https://github.com/BemTG/Provable-Multiple-Linear-Regression-Solver/blob/main/notebook%20tutorials/Provable%20Multiple%20Linear%20Regression%20Solver%20(Forecasting%20AAVE%20Business%20metrics).ipynb)
+- [Forecasting AAVE's WETH Pool Lifetime Repayments](tutorial/Provable_Multiple_Linear%20Regression_AAVE.md)
 - Boston Housing Dataset: Estimates valuation of house prices given multiple feature inputs
 - Basic Simple Linear regression dataset
