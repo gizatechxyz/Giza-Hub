@@ -286,7 +286,7 @@ The outlined code structure below should serve as a guide to help with  our impl
 ```
 
 ### Setting up the Scarb project 
-Scarb is the Cairo package manager specifically created to streamline our Cairo development process. Scarb will typically manage project dependencies, the compilation process (both pure Cairo and Starknet contracts), and downloading and building external libraries such as Orion.You can find all the information about Scarb and Cairo installation [here](../../framework/get-started.md#installations). 
+Scarb is the Cairo package manager specifically created to streamline our Cairo development process. Scarb will typically manage project dependencies, the compilation process (both pure Cairo and Starknet contracts), and downloading and building external libraries such as Orion.You can find all the information about Scarb and Cairo installation [here](https://orion.gizatech.xyz/framework/get-started). 
 
 To create a new Scarb project, open your terminal and run:
 
@@ -1079,6 +1079,6 @@ test result: ok. 1 passed; 0 failed; 0 ignored; 0 filtered out;
 
 Congratulations on reaching this point! :clap: You are now ready to implement fully transparent and verifiable forecasting solutions using this MLR framework. 
 
-If you're looking for more examples of using the MLR Solver, look into [here](../notebook_tutorials) as it covers more easy-to-follow jupyter notebook tutorials (e.g. Boston dataset). :grin: 
+If you're looking for more examples of using the MLR Solver, look into [here](https://github.com/gizatechxyz/Orion-Hub/tree/main/finance/provable_multiple_linear_regression_solver/tutorial) as it covers more easy-to-follow jupyter notebook tutorials (e.g. Boston dataset). :grin: 
 
 We invite you to join us in forging a future by making AI a transparent and reliable resource for all! 
