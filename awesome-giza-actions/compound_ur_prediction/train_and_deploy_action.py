@@ -93,6 +93,7 @@ def parse_compound_df(assets_to_keep):
     compound_df = compound_df.drop("totalSupply")
     compound_df = compound_df.drop("totalSupplyUSD")
     compound_df = compound_df.drop("totalBorrowUSD")
+    compound_df = compound_df.filter(compound_df["symbol"].is_in(assets_to_keep))
     compound_df = compound_df.group_by(["date", "symbol"]).agg(
         [
             pl.col("totalBorrows").sum().alias("totalBorrows"),
