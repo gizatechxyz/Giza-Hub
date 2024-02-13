@@ -1,4 +1,5 @@
 target
 *.onnx
 Scarb.lock
-awesome-giza-actions/Aave_Liquiditation_Model/cairo_model
+awesome-giza-actions/Aave_Liquidation_Model/cairo_model
+*.DS_Store
