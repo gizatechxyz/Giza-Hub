@@ -1,8 +1,0 @@
-
-    [package]
-    name = "sequential_1_dense_3_biasadd_readvariableop_0"
-    version = "0.1.0"
-
-    [dependencies]
-    orion = { git = "https://github.com/gizatechxyz/orion.git", rev = "v0.1.5" }
-    

@@ -1,0 +1,7 @@
+ipython
+ipykernel
+numpy
+matplotlib
+tensorflow
+tensorflow_model_optimization
+scipy

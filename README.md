@@ -1,24 +1,16 @@
-# Welcome to Orion Hub
+# Giza Hub
 
-A curated list of models built with [Orion](https://github.com/gizatechxyz/orion).
+Welcome to Giza Hub! You will find models and use cases made by the community with [Giza](https://docs.gizatech.xyz/).
 
-## Models
+## ✨ Awesome Orion
+A curated list of models and algorithms built with [Orion](https://github.com/gizatechxyz/orion).
 
-### Basics
-- [MNIST Classification with Feedforward Neural Network](basic/mnist_nn)
-- [Verifiable Linear Regression Model](basic/verifiable_linear_regression_model)
-- [Verifiable Support Vector Machine](basic/verifiable_support_vector_machine)
-- [Verifiable Principal Components Analysis](basic/verifiable_principal_component_analysis)
-
-### Finance
-- [Closed-Form Multiple Linear Regression: Forecasting AAVE's Lifetime Repayment metrics](finance/provable_multiple_linear_regression_solver)
-
-### Gaming
-- [Tic-Tac-Toe Game AI Agent](gaming/tic_tac_toe)
+## ⚡️ Awesome Giza Actions
+A curated list of algorithms and use cases built with [Action SDK](https://github.com/gizatechxyz/orion).
 
 
-## Learn the basics
+## Learn more about the entire Giza ecosystem
 
-Familiarize yourself with Orion concepts and modules. How to build your own neural networks and perform inference.
+Familiarize yourself with Giza concepts and tools.
 
-[Getting started with Orion →](https://orion.gizatech.xyz/welcome/readme)
+[Getting started with Giza →](https://docs.gizatech.xyz/)
