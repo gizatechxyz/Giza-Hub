@@ -8,7 +8,7 @@ A curated list of models and algorithms built with [Giza Actions SDK](https://ac
 - [MNIST Classification with Giza Actions](https://github.com/gizatechxyz/actions-sdk/blob/main/examples/verifiable_mnist/verifiable_mnist.ipynb)
 
 ## DeFi
-- [Binary Liquidation Prediction in Aave v2 & v3](Aave Liquidation Model)
+- [Binary Liquidation Prediction in Aave v2 & v3](Aave_Liquidation_Model)
 
 ## Learn the basics
 
