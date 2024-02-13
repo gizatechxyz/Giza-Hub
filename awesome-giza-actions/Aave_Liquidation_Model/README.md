@@ -12,9 +12,16 @@ Giza Actions SDK: https://actions.gizatech.xyz/welcome/giza-actions-sdk
 
 ## Installation
 
-'''poetry install'''
+This project uses poetry as the dependency manager, to install the required dependencies simply execute:
 
-## Quickstart
+```bash 
+$ poetry install
+```
+## Project Structure
+
+The project is divided into two jupyter notebooks:  [aave_liquidations_model](aave_liquidations_actions.ipynb) and [aave_liquidations_actions](awesome-giza-actions/Aave_Liquidation_Model/aave_liquidations_actions.ipynb). 
+
+First, run aave_liquidations_model to create the .onnx model and then follow the instructions in aave_liquidations_actions to make the model verifiable through Giza Actions.
 
 ## Datasets
 
