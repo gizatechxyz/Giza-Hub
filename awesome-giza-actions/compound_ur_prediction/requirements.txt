@@ -1,0 +1,9 @@
+certifi==2023.5.7
+gcsfs==2024.2.0
+giza==0.5.18
+giza_actions==0.1.2
+giza_datasets==0.1.1
+numpy==1.24.1
+polars==0.20.7
+requests==2.31.0
+torch==1.13.1
