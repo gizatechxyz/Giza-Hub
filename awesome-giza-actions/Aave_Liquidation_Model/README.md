@@ -5,10 +5,14 @@ In this tutorial, we are going to use the giza-datasets and the giza-cli librari
 ## Documentations
 
 Giza CLI : https://cli.gizatech.xyz/welcome/readme
+
 Giza Datasets : https://datasets.gizatech.xyz/welcome/giza-datasets
+
 Giza Actions SDK: https://actions.gizatech.xyz/welcome/giza-actions-sdk
 
 ## Installation
+
+'''poetry install'''
 
 ## Quickstart
 
@@ -17,6 +21,10 @@ Giza Actions SDK: https://actions.gizatech.xyz/welcome/giza-actions-sdk
 Datasets being used for training purposes are loaded through the Datasets SDK.
 
 Historical Liquidations: 
+
+https://datasets.gizatech.xyz/hub/aave/liquidations-v2
+
+https://datasets.gizatech.xyz/hub/aave/liquidations-v3
 
 Daily Deposits & Borrows:
 
@@ -27,7 +35,6 @@ https://datasets.gizatech.xyz/hub/aave/daily-deposits-and-borrows-v3
 Historical Token Data (Price, Volume, Market Cap)
 
 https://datasets.gizatech.xyz/hub/aggregated-datasets/tokens-daily-information
-
 
 ## Model 
 
