@@ -1,0 +1,15 @@
+[package]
+name = "inference"
+version = "0.1.0"
+edition = "2023_10"
+
+[dependencies]
+node_fc1_weight = { path = "../initializers/node_fc1_weight"} 
+node_fc1_bias = { path = "../initializers/node_fc1_bias"} 
+node_fc2_weight = { path = "../initializers/node_fc2_weight"} 
+node_fc2_bias = { path = "../initializers/node_fc2_bias"} 
+node_fc3_weight = { path = "../initializers/node_fc3_weight"} 
+node_fc3_bias = { path = "../initializers/node_fc3_bias"} 
+orion = { git = "https://github.com/gizatechxyz/orion.git", rev = "8ff7389" } 
+[lib]
+sierra-text = true
