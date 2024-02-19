@@ -2,6 +2,10 @@
 
 In this tutorial, we are going to use the giza-datasets and the giza-cli libraries to develop a verifiable ML Model for predicting liquidiations of debt positions in Aave v2 & v3 Protocols.
 
+## Tutorial
+
+For the in-depth tutorial on this project, please check the Giza Docs: https://actions.gizatech.xyz/tutorials/aave-liquidation-prediction
+
 ## Documentations
 
 Giza CLI : https://cli.gizatech.xyz/welcome/readme
@@ -22,6 +26,8 @@ $ poetry install
 The project is divided into two jupyter notebooks:  [aave_liquidations_model](aave_liquidations_actions.ipynb) and [aave_liquidations_actions](awesome-giza-actions/Aave_Liquidation_Model/aave_liquidations_actions.ipynb). 
 
 First, run aave_liquidations_model to create the .onnx model and then follow the instructions in aave_liquidations_actions to make the model verifiable through Giza Actions.
+
+Alternatively, you can run [aave_liquidations_model.py](aave_liquidations_model.py) to create the model completely as a Giza Action, with the many model development steps being segmented into Giza Tasks.
 
 ## Datasets
 
