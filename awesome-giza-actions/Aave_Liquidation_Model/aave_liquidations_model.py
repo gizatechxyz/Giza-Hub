@@ -128,7 +128,7 @@ def train_test_split(merged_df, test_size = 40):
 
     return train_set, test_set
 
-@task(name=f'MinMax_TrainSet_Fit')
+
 def minmax_fit_scale(columns, df):
 
     scaler = MinMaxScaler()
@@ -137,7 +137,7 @@ def minmax_fit_scale(columns, df):
     scaled_df[columns] = scaler.fit_transform(scaled_df[columns])
     return scaled_df, scaler 
 
-@task(name=f'MinMax_TestSet_Scale')
+
 def minmax_scale(columns, df, scaler):
 
     scaled_df = df.copy()

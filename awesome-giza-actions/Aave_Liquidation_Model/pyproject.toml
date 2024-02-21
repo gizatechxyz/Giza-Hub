@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "aave liquiditation model"
+name = "aave-liquiditation-model"
 version = "0.1.0"
 description = ""
 authors = ["EgeAtesalp <egeatesalp@gmail.com>"]
