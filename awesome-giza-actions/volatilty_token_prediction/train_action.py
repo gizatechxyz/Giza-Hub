@@ -124,6 +124,16 @@ def test_model(X_test, y_test, y_train, model):
         y_train (pd.Series): Target values from the training set, used for naive benchmarking.
         model (Model): The trained model to evaluate.
     """
+def test_model(X_test, y_test, y_train, model):
+    """
+    Tests the trained model against a test dataset and benchmarks against a naive mean predictor.
+    
+    Parameters:
+        X_test (pd.DataFrame): Test feature matrix.
+        y_test (pd.Series): True target values for testing.
+        y_train (pd.Series): Target values from the training set, used for naive benchmarking.
+        model (Model): The trained model to evaluate.
+    """
     y_pred_test = model.predict(X_test)
 
     # Convert log-transformed values back to original scale
@@ -136,9 +146,12 @@ def test_model(X_test, y_test, y_train, model):
     r2_test = r2_score(original_y_test, original_y_preds)
 
     # Benchmark metrics against a naive predictor that always predicts the mean of the training set
-    mse_benchmark = mean_squared_error(original_y_test, np.full(len(original_y_test), np.mean(np.exp(y_train) - 1)))
-    mae_benchmark = mean_absolute_error(original_y_test, np.full(len(original_y_test), np.mean(np.exp(y_train) - 1)))
-    r2_benchmark = r2_score(original_y_test, np.full(len(original_y_test), np.mean(np.exp(y_train) - 1)))
+    average_volatility_last_days = np.mean(np.exp(y_train[-len(y_test):]) - 1)
+    benchmark_predictions = np.full(len(y_test), average_volatility_last_days)
+
+    mse_benchmark= mean_squared_error(original_y_test, benchmark_predictions)
+    mae_benchmark = mean_absolute_error(original_y_test, benchmark_predictions)
+    r2_benchmark = r2_score(original_y_test, benchmark_predictions)
 
     print("test_metrics: " + str(mse_test), str(mae_test), str(r2_test))
     print("benchmark_metrics: " + str(mse_benchmark), str(mae_benchmark), str(r2_benchmark))
