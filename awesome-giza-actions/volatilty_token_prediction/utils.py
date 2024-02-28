@@ -1,5 +1,6 @@
 from giza_datasets import DatasetsLoader
 import pandas as pd
+import polars as pl
 import numpy as np
 from sklearn.feature_selection import RFE
 from lightgbm import LGBMRegressor

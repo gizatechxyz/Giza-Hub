@@ -6,6 +6,10 @@ from utils import (remove_columns_with_nulls_above_threshold,
                     dimensionality_reduction)
 import numpy as np
 import onnx
+import torch
+import json
+
+from sklearn.metrics import mean_absolute_error, mean_squared_error, r2_score
 from giza_actions.task import task
 from giza_actions.action import Action, action
 from sklearn.model_selection import TimeSeriesSplit
@@ -142,21 +146,40 @@ def test_model(X_test, y_test, y_train, model):
 @task(name="Convert To ONNX")
 def convert_to_onnx(model, sample_input, onnx_file_path):
     """
-    Converts a trained model to ONNX format and saves it to a specified file path.
-    
+    Converts a PyTorch model to the ONNX format and saves it to a specified file path.
+
     Parameters:
-        model (Model): The trained model to convert.
-        sample_input (np.array): A sample input for model inference, used for ONNX conversion.
-        onnx_file_path (str): Path where the ONNX model will be saved.
+    - model: The PyTorch model to be converted.
+    - sample_len: The length of the input sample, specifying the input size.
+    - onnx_file_path: The file path where the ONNX model will be saved.
+
+    This function takes a trained PyTorch model and a sample input size, exports the model to the ONNX format,
+    and saves it to the provided file path. It specifies model input/output names and handles dynamic batch sizes
+    for flexibility in model deployment.
     """
-    onnx_gbt = convert(model, 'onnx', sample_input)
+
+    torch_gbt = convert(model, 'torch', sample_input[:1])
+    torch_input = torch.from_numpy(sample_input[:1])
     try:
-        # Attempt to make a prediction with the converted model to verify successful conversion
-        out = onnx_gbt.predict(sample_input)
+        out = torch_gbt.predict(torch_input)
     except:
         print(f"Error converting to onnx")
-    onnx.save_model(onnx_gbt.model, onnx_file_path)
+    
+   
+
+    torch.onnx.export(torch_gbt.model,
+                  torch_input,
+                  onnx_file_path,
+                  export_params=True,        # store the trained parameter weights inside the model file
+                  opset_version=11,          # the ONNX version to export the model to
+                  input_names=['input'],   # the model's input names
+                  output_names=['output'],  # the model's output names
+                  dynamic_axes={'input': {0: 'batch_size'},    # variable length axes
+                                'output': {0: 'batch_size'}})
     print(f"Model has been converted to ONNX and saved to {onnx_file_path}")
+
+    input = {"input_data": sample_input[0].tolist()}
+    json.dump(input, open("input.json", 'w'))
 
 @action(name='Execution', log_prints=True)
 def execution():
