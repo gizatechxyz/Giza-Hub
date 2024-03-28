@@ -270,7 +270,7 @@ def prediction(X_val, model_id, version_id):
         print("Invalid input shape. Expected shape: (1, 30, 14)")
         return None
 
-    (result, request_id) = model.predict(input_feed={"input_1": X_val}, verifiable=True, output_dtype='Tensor<FP16x16>'
+    (result, request_id) = model.predict(input_feed={"input_1": X_val}, verifiable=True
   )
 
     return result, request_id
