@@ -1,20 +1,21 @@
-import pprint
-import numpy as np
-from giza_actions.action import action
-from giza_actions.agent import GizaAgent, AgentResult
-from giza_actions.task import task
 import argparse
-from prefect import get_run_logger
 import os
-from dotenv import load_dotenv, find_dotenv
+import pprint
+
+import numpy as np
 from addresses import ADDRESSES
-from lp_tools import *
+from dotenv import find_dotenv, load_dotenv
+from giza_actions.action import action
+from giza_actions.agent import AgentResult, GizaAgent
+from giza_actions.task import task
+from lp_tools import get_tick_range
+from prefect import get_run_logger
 from uni_helpers import (
-    get_mint_params,
-    get_all_user_positions,
-    close_position,
-    check_allowance,
     approve_token,
+    check_allowance,
+    close_position,
+    get_all_user_positions,
+    get_mint_params,
 )
 
 load_dotenv(find_dotenv())
@@ -24,17 +25,16 @@ sepolia_rpc_url = os.environ.get("SEPOLIA_RPC_URL")
 
 
 @task(name="Data processing")
-def process_data(realized_vol, dec_price_change):
+def process_data(realized_vol: float, dec_price_change: float):
     pct_change_sq = (100 * dec_price_change) ** 2
-    # X = torch.Tensor([[realized_vol, pct_change_sq]])
     X = np.array([[realized_vol, pct_change_sq]])
-
     return X
 
 
 @task(name="Get volatility and price change data")
 def get_data():
     # TODO: implement fetching onchain or from some other source
+    # hardcoding the values for now
     realized_vol = 4.20
     dec_price_change = 0.1
     return realized_vol, dec_price_change
@@ -83,17 +83,18 @@ def get_pred_val(prediction: AgentResult):
     Returns:
         int: Predicted value.
     """
-    # This will block the executon until the prediction has generated the proof and the proof has been verified
+    # This will block the executon until the prediction has generated the proof
+    # and the proof has been verified
     return prediction.value[0][0]
 
 
 # Create Action
 @action(log_prints=True)
 def rebalance_lp(
-    tokenA_amount,
-    tokenB_amount,
-    pred_model_id,
-    pred_version_id,
+    tokenA_amount: int,
+    tokenB_amount: int,
+    pred_model_id: int,
+    pred_version_id: int,
     account="dev",
     chain=f"ethereum:sepolia:{sepolia_rpc_url}",
     nft_id=None,
@@ -102,11 +103,10 @@ def rebalance_lp(
     nft_manager_address = ADDRESSES["NonfungiblePositionManager"][11155111]
     tokenA_address = ADDRESSES["UNI"][11155111]
     tokenB_address = ADDRESSES["WETH"][11155111]
-    # pool_factory_address = ADDRESSES["PoolFactory"][11155111]
     pool_address = "0x287B0e934ed0439E2a7b1d5F0FC25eA2c24b64f7"
     user_address = "0xCBB090699E0664f0F6A4EFbC616f402233718152"
     pool_fee = 3000
-    logger.info(f"Fetching input data")
+    logger.info("Fetching input data")
     realized_vol, dec_price_change = get_data()
     logger.info(f"Input data: {realized_vol}, {dec_price_change}")
     X = process_data(realized_vol, dec_price_change)

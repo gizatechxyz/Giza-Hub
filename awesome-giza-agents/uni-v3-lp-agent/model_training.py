@@ -1,10 +1,11 @@
+import datetime
+
 import numpy as np
+import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import yfinance as yf
-import datetime
-import pandas as pd
 from sklearn.metrics import mean_squared_error as mse
 
 
@@ -22,7 +23,7 @@ def download_data():
     return uni, eth
 
 
-def process_data(uni, eth):
+def process_data(uni: pd.DataFrame, eth: pd.DataFrame):
     uni = uni[uni["Open"] < 0.30]
     uni = uni[["Date", "Open"]]
     eth = eth[["Date", "Open"]]
@@ -57,7 +58,12 @@ def process_data(uni, eth):
     return X_train, X_test, Y_train, Y_test
 
 
-def train_model(X_train, X_test, Y_train, Y_test):
+def train_model(
+    X_train: pd.DataFrame,
+    X_test: pd.DataFrame,
+    Y_train: pd.DataFrame,
+    Y_test: pd.DataFrame,
+):
     model = nn.Sequential(
         nn.Linear(X_train.shape[1], 128),
         nn.ReLU(),
@@ -82,7 +88,6 @@ def train_model(X_train, X_test, Y_train, Y_test):
     DL_RMSE = []
 
     for i, j, k in zip(range(4), epochs_trial, batch_trial):
-        # Assuming batch processing is not needed for simplicity, but can be implemented with DataLoader
         for epoch in range(j):
             optimizer.zero_grad()
             outputs = model(X_tensor)
@@ -101,7 +106,9 @@ def train_model(X_train, X_test, Y_train, Y_test):
     return model
 
 
-def serialize_to_onnx(model, X_train, save_path="torch_vol_model"):
+def serialize_to_onnx(
+    model: nn.Module, X_train: pd.DataFrame, save_path="torch_vol_model"
+):
     # Ensure the model is in evaluation mode
     model.eval()
 

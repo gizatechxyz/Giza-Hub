@@ -1,10 +1,10 @@
-from ape import Contract, accounts, networks, chain
-import time
-from addresses import ADDRESSES
-from lp_tools import *
 import os
+import time
+
+from ape.contracts.base import ContractInstance
+from dotenv import find_dotenv, load_dotenv
 from giza_actions.task import task
-from dotenv import load_dotenv, find_dotenv
+from lp_tools import MAX_UINT_128
 
 load_dotenv(find_dotenv())
 
@@ -13,25 +13,25 @@ sepolia_rpc_url = os.environ.get("SEPOLIA_RPC_URL")
 
 
 @task(name="Check allowance")
-def check_allowance(token, spender, account, amount):
+def check_allowance(token: ContractInstance, spender: str, account: str, amount: int):
     return token.allowance(account, spender) >= amount
 
 
 @task(name="Approve token spend")
-def approve_token(token, spender, amount):
+def approve_token(token: ContractInstance, spender: str, amount: int):
     return token.approve(spender, amount)
 
 
 @task(name="Get mint parameters")
 def get_mint_params(
-    user_address,
-    tokenA_address,
-    tokenB_address,
-    amount0,
-    amount1,
-    pool_fee,
-    lower_tick,
-    upper_tick,
+    user_address: str,
+    tokenA_address: str,
+    tokenB_address: str,
+    amount0: int,
+    amount1: int,
+    pool_fee: int,
+    lower_tick: int,
+    upper_tick: int,
     deadline=None,
     slippage_tolerance=0.01,
 ):
@@ -54,7 +54,7 @@ def get_mint_params(
 
 
 @task(name="Get all user LP positions")
-def get_all_user_positions(nft_manager, user_address):
+def get_all_user_positions(nft_manager: ContractInstance, user_address: str):
     n_positions = nft_manager.balanceOf(user_address)
     positions = []
     for n in range(n_positions):
@@ -63,8 +63,7 @@ def get_all_user_positions(nft_manager, user_address):
     return positions
 
 
-# @task(name="Get the position liquidity")
-def get_pos_liquidity(nft_manager, nft_id):
+def get_pos_liquidity(nft_manager: ContractInstance, nft_id: int):
     (
         nonce,
         operator,
@@ -82,53 +81,9 @@ def get_pos_liquidity(nft_manager, nft_id):
     return liquidity
 
 
-@task(name=f"Close the position")
-def close_position(user_address, nft_manager, nft_id):
+@task(name="Close the position")
+def close_position(user_address: str, nft_manager: ContractInstance, nft_id: int):
     liq = get_pos_liquidity(nft_manager, nft_id)
     if liq > 0:
         nft_manager.decreaseLiquidity((nft_id, liq, 0, 0, int(time.time() + 60)))
         nft_manager.collect((nft_id, user_address, MAX_UINT_128, MAX_UINT_128))
-
-
-if __name__ == "__main__":
-    networks.parse_network_choice(f"ethereum:sepolia:{sepolia_rpc_url}").__enter__()
-    chain_id = chain.chain_id
-
-    # step 1: set params
-    tokenA_amount = 1000
-    tokenB_amount = 1000
-    pct_dev = 0.1
-    pool_fee = 3000
-    # step 2: load contracts
-    tokenA = Contract(ADDRESSES["UNI"][chain_id])
-    tokenB = Contract(ADDRESSES["WETH"][chain_id])
-    nft_manager = Contract(ADDRESSES["NonfungiblePositionManager"][chain_id])
-    pool_factory = Contract(ADDRESSES["PoolFactory"][chain_id])
-    pool_address = pool_factory.getPool(tokenA.address, tokenB.address, pool_fee)
-    pool = Contract(pool_address)
-    dev = accounts.load("dev")
-    dev.set_autosign(True, passphrase=dev_passphrase)
-    user_address = dev.address
-    with accounts.use_sender("dev"):
-        # step 3: fetch open positions
-        positions = get_all_user_positions(nft_manager, user_address)
-        print(f"Found the following open positions: {positions}")
-        # step 4: close all positions
-        print("Closing all open positions...")
-        for nft_id in positions:
-            close_position(user_address, nft_manager, nft_id)
-        # step 4: calculate mint params
-        print("Calculating mint params...")
-        _, curr_tick, _, _, _, _, _ = pool.slot0()
-        tokenA_decimals = tokenA.decimals()
-        tokenB_decimals = tokenB.decimals()
-        curr_price = tick_to_price(curr_tick, tokenA_decimals, tokenB_decimals)
-        lower_tick, upper_tick = get_tick_range(
-            curr_tick, pct_dev, tokenA_decimals, tokenB_decimals, pool_fee
-        )
-        mint_params = get_mint_params(
-            user_address, tokenA_amount, tokenB_amount, pool_fee, lower_tick, upper_tick
-        )
-        # step 5: mint new position
-        print("Minting new position...")
-        nft_manager.mint(mint_params)

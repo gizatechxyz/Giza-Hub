@@ -1,8 +1,8 @@
-from ape import Contract, accounts, networks, chain
-import time
-from addresses import ADDRESSES
 import os
-from dotenv import load_dotenv, find_dotenv
+
+from addresses import ADDRESSES
+from ape import Contract, accounts, chain, networks
+from dotenv import find_dotenv, load_dotenv
 
 load_dotenv(find_dotenv())
 
@@ -22,7 +22,7 @@ if __name__ == "__main__":
     uni_mint_amount = int(0.5 * weth_mint_amount)
 
     pool_factory = Contract(ADDRESSES["PoolFactory"][chain_id])
-    pool_address = "0x287B0e934ed0439E2a7b1d5F0FC25eA2c24b64f7"  # pool_factory.getPool(uni.address, weth.address, pool_fee)
+    pool_address = "0x287B0e934ed0439E2a7b1d5F0FC25eA2c24b64f7"
     pool = Contract(pool_address)
     swap_router = Contract(ADDRESSES["Router"][chain_id])
     wallet = accounts.load("dev")
