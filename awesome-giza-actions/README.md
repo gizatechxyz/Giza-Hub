@@ -7,7 +7,6 @@ A curated list of models and algorithms built with [Giza Actions SDK](https://ac
 ### Basics
 
 - [MNIST Classification with Giza Actions](https://github.com/gizatechxyz/actions-sdk/blob/main/examples/verifiable_mnist/verifiable_mnist.ipynb)
-- [Uniswap V3 LP Rebalancing with AI Agent](uni-v3-lp-agent)
 
 ## Learn the basics
 
