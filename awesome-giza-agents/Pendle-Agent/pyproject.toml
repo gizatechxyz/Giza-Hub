@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "yield-predictor-model"
+name = "pendle-agent"
 version = "0.1.0"
 description = ""
 authors = ["EgeAtesalp <egeatesalp@gmail.com>"]
