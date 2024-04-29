@@ -1,5 +1,7 @@
-wstETH_yield_model/
+weETH_yield_model/
 data_array.npy
 data_extended_array.npy
 model_extended.onnx
 model_simple.onnx
+
+__pycache__/

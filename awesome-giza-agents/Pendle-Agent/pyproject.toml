@@ -10,13 +10,14 @@ python = ">=3.11,<4.0"
 giza-datasets = "^0.1.0"
 numpy = "^1.26.4"
 certifi = "^2024.2.2"
-pandas = "^2.2.0"
 torch = "^2.2.0"
 seaborn = "^0.13.2"
 matplotlib = "^3.8.2"
 scikit-learn = "^1.4.0"
 onnx = "^1.15.0"
 giza-actions = "^0.1.2"
+eth-ape = "^0.7.16"
+ape-foundry = "^0.7.4"
 
 
 [tool.poetry.group.dev.dependencies]
