@@ -3,5 +3,6 @@ data_array.npy
 data_extended_array.npy
 model_extended.onnx
 model_simple.onnx
+.env
 
 __pycache__/

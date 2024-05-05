@@ -15,9 +15,9 @@ seaborn = "^0.13.2"
 matplotlib = "^3.8.2"
 scikit-learn = "^1.4.0"
 onnx = "^1.15.0"
-giza-actions = "^0.1.2"
 eth-ape = "^0.7.16"
 ape-foundry = "^0.7.4"
+giza-actions = "^0.3.1"
 
 
 [tool.poetry.group.dev.dependencies]
