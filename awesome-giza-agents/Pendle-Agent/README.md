@@ -1,10 +1,10 @@
 # Introduction
 
-In this tutorial, we will go over the basics of Giza agents and implement a Pendle Trading bot using the Giza Agents Framework. Altough we will explain the basic flow to create an agent, we strongly recommend you to first read the Giza Agents[] and Giza Actions SDK[] documentation to understand the fundementals of Giza Stack.
+In this tutorial, we will go over the basics of Giza agents and implement a Pendle Trading bot using the Giza Agents Framework. Although we will explain the basic flow to create an agent, we strongly recommend you to first read the [Giza Agents](https://agents.gizatech.xyz/) and [Giza CLI](https://cli.gizatech.xyz/) documentations to understand the fundamentals of Giza Stack.
 
 This tutorial is meant to exemplify various ways the ML models can be used within the Giza Agents framework to create on-chain actions in an automated way, while still adhering to the trust-minimizing approach that underly blockchains and DeFi. Pendle Protocol is a great protocol to build on since it is relatively popular and is a great enviroment to build a yield trading bot given its native yield abstraction tokens, however similar agents can be built on any DeFi protocol.
 
-In addition, unlike Uniswap V3 and MNIST agents, the agent is built in a local, forked Ethereum Network using Foundry. In the following sections, we will illustrate how to use a local forked network to develop an agent in a safe testing enviroment.
+In addition, unlike Uniswap V3 and MNIST agents, the agent is built in a local, forked Ethereum Network using Foundry. In the following sections, we will illustrate how to use a local forked network to develop an agent in a safe testing environment.
 
 *It is important to underscore that this agent is a proof of work that is built in a forked, local Ethereum network. This agent is not audited and should not be deployed onchain without heavy caution.*
 
@@ -13,13 +13,13 @@ In addition, unlike Uniswap V3 and MNIST agents, the agent is built in a local, 
 
 [Pendle Documentation](https://docs.pendle.finance/Introduction)
 
-Pendle Protocol is a permissionless yield trading protocol that use tokenization to seperate yield from the underlying token. To briefly summarize, any yield bearing token (in our project, we use weETH) can be wrapped into its standardized SY Pendle variant (SY-weETH). This SY token, which represents both the underlying non-yield token (ETH) as well as its yield bearing portion, can then be seperated and traded with two tokenized components, which are called Principal Token (PT-weETH) and Yield Token (YT-weETH). Through its PT-SY AMM's, Pendle Protocol allows users to trade between the potential yield and the underlying value of the token and consequently create yield markets for many popular yield bearing tokens. 
+Pendle Protocol is a permissionless yield trading protocol that use tokenization to separate yield from the underlying token. To briefly summarize, any yield bearing token (in our project, we use weETH) can be wrapped into its standardized SY Pendle variant (SY-weETH). This SY token, which represents both the underlying non-yield token (ETH) as well as its yield bearing portion, can then be seperated and traded with two tokenized components, which are called Principal Token (PT-weETH) and Yield Token (YT-weETH). Through its PT-SY AMM's, Pendle Protocol allows users to trade between the potential yield and the underlying value of the token and consequently create yield markets for many popular yield bearing tokens. 
 
 This agent focuses on the weETH, the wrapped version of the ether.fi token, which is traded between its SY and PT variants. To execute informed and profitable trades, agent leverages a yield prediction ZKML model for eETH, verifies its output using the its ZKML proof and ultimately compares it with the PT-SY price as well as the fixed PT-yield to automatically trade between PT-weETH and SY-weETH tokens.
 
 # 2. Installing Dependencies and Project Setup
 
-- Python 3.11 or later must be installed, we recommend using a virtual enviroment.
+- Python 3.11 or later must be installed, we recommend using a virtual environment.
 
 This project uses poetry as the dependency manager, to install the required dependencies simply execute:
 
