@@ -62,7 +62,7 @@ Checklist:
 Open up a new terminal, and type in the following command
 
 ```bash 
-$ anvil --fork-url https://eth-mainnet.g.alchemy.com/v2/2wtA355jUEdBXuG1HURqkdSNQ2yu-HlG --fork-block-number 19754466 --fork-chain-id 1 --chain-id 1
+$ anvil --fork-url <RPC_URL> --fork-block-number 19754466 --fork-chain-id 1 --chain-id 1
 ```
 
 This creates a local Ethereum mainnet network (chain-id 1) from the 19754466'th block, which we will use to run our agent on. Working on a local fork provides various advantages, such as being able to experiment with any smart contract and protocol that is on the target network.
