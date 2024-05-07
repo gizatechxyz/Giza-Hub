@@ -24,7 +24,7 @@ This agent focuses on the weETH, the wrapped version of the ether.fi token, whic
 This project uses poetry as the dependency manager, to install the required dependencies simply execute:
 
 ```bash 
-$ poetry install
+poetry install
 ```
 - An active Giza account is required to deploy the model and use agents. If you don't have one, you can create one [here](https://cli.gizatech.xyz/examples/basic).
 
@@ -62,7 +62,7 @@ Checklist:
 Open up a new terminal, and type in the following command
 
 ```bash 
-$ anvil --fork-url <RPC_URL> --fork-block-number 19754466 --fork-chain-id 1 --chain-id 1
+anvil --fork-url <RPC_URL> --fork-block-number 19754466 --fork-chain-id 1 --chain-id 1
 ```
 
 This creates a local Ethereum mainnet network (chain-id 1) from the 19754466'th block, which we will use to run our agent on. Working on a local fork provides various advantages, such as being able to experiment with any smart contract and protocol that is on the target network.
@@ -72,7 +72,7 @@ To be able to use the agent, we require some tokens to begin with.
 *Before running the setup.py, make sure to edit the marked lines to include your Ape password and your Ape username*
 
 ```bash 
-$ python agent/setup.py
+python agent/setup.py
 ```
 
 This command will login to your Ape wallet, and mint you the required amount of weETH to be able to run the agent.
