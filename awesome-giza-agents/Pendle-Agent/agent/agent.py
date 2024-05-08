@@ -1,6 +1,5 @@
 import argparse
 import os
-import pprint
 
 import numpy as np
 from addresses import ADDRESSES
@@ -8,32 +7,26 @@ from dotenv import find_dotenv, load_dotenv
 from giza_actions.action import action
 from giza_actions.agent import AgentResult, GizaAgent
 from giza_actions.task import task
+from helpers import (calculate_price, guess_out_tuple, input_tuple,
+                     no_limit_order_params, swap_logic)
 from prefect import get_run_logger
-from ape import Contract, accounts, chain, networks
-from helpers import calculate_price, swap_logic, no_limit_order_params, input_tuple, guess_out_tuple
 
 load_dotenv(find_dotenv())
-
 
 
 os.environ["PENDLE-AGENT_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
 
 
-
-
-
 @task(name="Create a Giza agent using Agent_ID")
-def create_agent(
-    agent_id: int,  chain: str, contracts: dict, account_alias: str
-):
+def create_agent(agent_id: int, chain: str, contracts: dict, account_alias: str):
     """
     Create a Giza agent for the Pendle protocol
     """
     agent = GizaAgent.from_id(
-    id=agent_id,
-    contracts=contracts,
-    chain=chain,
-    account=account_alias,
+        id=agent_id,
+        contracts=contracts,
+        chain=chain,
+        account=account_alias,
     )
     return agent
 
@@ -74,14 +67,13 @@ def get_pred_val(prediction: AgentResult):
 # Create Action
 @action(log_prints=True)
 def SY_PY_swap(
-    weETH_amount : float,
-    agent_id : int,
-    fixed_yield : float,
-    expiration_days : int,
+    weETH_amount: float,
+    agent_id: int,
+    fixed_yield: float,
+    expiration_days: int,
     account="pendle-agent",
-    chain=f"ethereum:mainnet_fork:foundry",
+    chain="ethereum:mainnet-fork:foundry",
 ):
-    
     ## Change the PENDLE-AGENT_PASSPHRASE to be {AGENT-NAME}_PASSPHRASE
     os.environ["PENDLE-AGENT_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
 
@@ -134,21 +126,33 @@ def SY_PY_swap(
         logger.info(f"Calculated Price: {PT_price}")
 
         # If the two lines above are not commented, swap_logic will take a while, since it will wait until the result is verified to access result.value
-        traded_SY_amount, PT_weight = swap_logic(weETH_amount, PT_price, fixed_yield, result.value[0][0], expiration_days)
+        traded_SY_amount, PT_weight = swap_logic(
+            weETH_amount, PT_price, fixed_yield, result.value[0][0], expiration_days
+        )
 
-        logger.info(f"The amount of SY to be traded: {traded_SY_amount}, PT_weight: {PT_weight}")
+        logger.info(
+            f"The amount of SY to be traded: {traded_SY_amount}, PT_weight: {PT_weight}"
+        )
 
+        contracts.weETH.approve(
+            contracts.routerProxy.address, traded_SY_amount, max_fee=10**10
+        )
 
-        contracts.weETH.approve(contracts.routerProxy.address, traded_SY_amount , max_fee = 10**10)
+        contracts.routerProxy.swapExactTokenForPt(
+            wallet_address,
+            contracts.SY_weETH_Market.address,
+            0,
+            guess_out_tuple(),
+            input_tuple(contracts.weETH, traded_SY_amount),
+            no_limit_order_params(),
+        )
 
-        contracts.routerProxy.swapExactTokenForPt(wallet_address, contracts.SY_weETH_Market.address,0,guess_out_tuple()
-                                   ,input_tuple(contracts.weETH, traded_SY_amount),no_limit_order_params())
-        
         PT_balance = contracts.PT_weETH.balanceOf(wallet_address)
         weETH_balance = contracts.weETH.balanceOf(wallet_address)
 
-
-        logger.info(f"Swap succesfull! Currently, you own: {PT_balance} PT-weETH and {weETH_balance} weETH")
+        logger.info(
+            f"Swap succesfull! Currently, you own: {PT_balance} PT-weETH and {weETH_balance} weETH"
+        )
 
 
 if __name__ == "__main__":
@@ -159,17 +163,16 @@ if __name__ == "__main__":
     parser.add_argument("--agent-id", metavar="A", type=int, help="model-id")
     parser.add_argument("--weETH-amount", metavar="W", type=float, help="weETH-amount")
     parser.add_argument("--fixed-yield", metavar="Y", type=float, help="fixed-yield")
-    parser.add_argument("--expiration-days", metavar="E", type=int, help="days-untill-expiration")
-
+    parser.add_argument(
+        "--expiration-days", metavar="E", type=int, help="days-untill-expiration"
+    )
 
     # Parse arguments
     args = parser.parse_args()
-
 
     agent_id = args.agent_id
     weETH_amount = args.weETH_amount
     fixed_yield = args.fixed_yield
     expiration_days = args.expiration_days
 
-
-    SY_PY_swap(weETH_amount,agent_id,fixed_yield, expiration_days)
+    SY_PY_swap(weETH_amount, agent_id, fixed_yield, expiration_days)
