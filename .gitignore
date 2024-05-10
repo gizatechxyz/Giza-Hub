@@ -3,3 +3,4 @@ target
 Scarb.lock
 **/.ipynb_checkpoints
 **/tmp
+.DS_Store
