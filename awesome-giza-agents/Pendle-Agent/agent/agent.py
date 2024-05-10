@@ -10,6 +10,8 @@ from giza_actions.task import task
 from helpers import (calculate_price, guess_out_tuple, input_tuple,
                      no_limit_order_params, swap_logic)
 from prefect import get_run_logger
+from ape import accounts
+
 
 load_dotenv(find_dotenv())
 
@@ -86,8 +88,8 @@ def SY_PY_swap(
     SY_weETH_Market = ADDRESSES["SY_weETH_Market"]
     weETH = ADDRESSES["weETH"]
     PT_weETH = ADDRESSES["PT_weETH"]
-    wallet_address = ADDRESSES["wallet_address"]
-
+    wallet_address = accounts.load(account).address
+    
     # Load the data, this can be changed to retrieve live data
     file_path = "data/data_array.npy"
     X = np.load(file_path)
@@ -113,6 +115,8 @@ def SY_PY_swap(
     # predicted_value = get_pred_val(result)
     # logger.info("Verification complete, executing contract")
     logger.info(f"Result: {result}")
+
+
 
     with agent.execute() as contracts:
         logger.info("Verification complete, executing contract")
