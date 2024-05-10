@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "xgb-diabetes"
+version = "0.1.0"
+description = ""
+authors = ["raphaelDkhn <raphael@gizatech.xyz>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+giza-cli = "^0.15.1"
+giza-actions = "^0.3.2"
+scikit-learn = "^1.4.2"
+xgboost = "^2.0.3"
+jupyter = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
