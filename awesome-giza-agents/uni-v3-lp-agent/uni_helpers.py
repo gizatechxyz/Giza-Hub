@@ -3,7 +3,6 @@ import time
 
 from ape.contracts.base import ContractInstance
 from dotenv import find_dotenv, load_dotenv
-from giza_actions.task import task
 from lp_tools import MAX_UINT_128
 
 load_dotenv(find_dotenv())
@@ -12,17 +11,14 @@ dev_passphrase = os.environ.get("DEV_PASSPHRASE")
 sepolia_rpc_url = os.environ.get("SEPOLIA_RPC_URL")
 
 
-@task(name="Check allowance")
 def check_allowance(token: ContractInstance, spender: str, account: str, amount: int):
     return token.allowance(account, spender) >= amount
 
 
-@task(name="Approve token spend")
 def approve_token(token: ContractInstance, spender: str, amount: int):
     return token.approve(spender, amount)
 
 
-@task(name="Get mint parameters")
 def get_mint_params(
     user_address: str,
     tokenA_address: str,
@@ -53,7 +49,6 @@ def get_mint_params(
     return tuple(mint_params.values())
 
 
-@task(name="Get all user LP positions")
 def get_all_user_positions(nft_manager: ContractInstance, user_address: str):
     n_positions = nft_manager.balanceOf(user_address)
     positions = []
@@ -81,7 +76,6 @@ def get_pos_liquidity(nft_manager: ContractInstance, nft_id: int):
     return liquidity
 
 
-@task(name="Close the position")
 def close_position(user_address: str, nft_manager: ContractInstance, nft_id: int):
     liq = get_pos_liquidity(nft_manager, nft_id)
     if liq > 0:

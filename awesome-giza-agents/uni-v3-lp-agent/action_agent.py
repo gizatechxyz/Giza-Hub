@@ -5,9 +5,7 @@ import pprint
 import numpy as np
 from addresses import ADDRESSES
 from dotenv import find_dotenv, load_dotenv
-from giza_actions.action import action
 from giza_actions.agent import AgentResult, GizaAgent
-from giza_actions.task import task
 from lp_tools import get_tick_range
 from prefect import get_run_logger
 from uni_helpers import (
@@ -24,14 +22,13 @@ os.environ["DEV_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
 sepolia_rpc_url = os.environ.get("SEPOLIA_RPC_URL")
 
 
-@task(name="Data processing")
+
 def process_data(realized_vol: float, dec_price_change: float):
     pct_change_sq = (100 * dec_price_change) ** 2
     X = np.array([[realized_vol, pct_change_sq]])
     return X
 
 
-@task(name="Get volatility and price change data")
 def get_data():
     # TODO: implement fetching onchain or from some other source
     # hardcoding the values for now
@@ -40,7 +37,6 @@ def get_data():
     return realized_vol, dec_price_change
 
 
-@task(name="Create a Giza agent for the Volatility prediction model")
 def create_agent(
     model_id: int, version_id: int, chain: str, contracts: dict, account: str
 ):
@@ -57,7 +53,6 @@ def create_agent(
     return agent
 
 
-@task(name="Run the volatility prediction model")
 def predict(agent: GizaAgent, X: np.ndarray):
     """
     Predict the next day volatility.
@@ -72,7 +67,6 @@ def predict(agent: GizaAgent, X: np.ndarray):
     return prediction
 
 
-@task(name="Verify the inference proof and return the predicted value")
 def get_pred_val(prediction: AgentResult):
     """
     Get the value from the prediction.
@@ -87,9 +81,6 @@ def get_pred_val(prediction: AgentResult):
     # and the proof has been verified
     return prediction.value[0][0]
 
-
-# Create Action
-@action(log_prints=True)
 def rebalance_lp(
     tokenA_amount: int,
     tokenB_amount: int,

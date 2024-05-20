@@ -122,7 +122,6 @@ def get_pos_liquidity(nft_manager, nft_id):
     ) = nft_manager.positions(nft_id)
     return liquidity
 
-@task(name=f"Close the position")
 def close_position(user_address, nft_manager, nft_id):
     liq = get_pos_liquidity(nft_manager, nft_id)
     if liq > 0:
@@ -168,9 +167,7 @@ All the code can be found in [this script](action_agent.py). An example of how t
 
 ```
 from giza_actions.agent import GizaAgent
-from giza_actions.task import task
 
-@task(name="Run the volatility prediction model")
 def predict(agent: GizaAgent, X: np.ndarray):
     """
     Predict the next day volatility.
@@ -184,7 +181,6 @@ def predict(agent: GizaAgent, X: np.ndarray):
     prediction = agent.predict(input_feed={"val": X}, verifiable=True, job_size="XL")
     return prediction
 
-@task(name="Create a Giza agent for the Volatility prediction model")
 def create_agent(
     model_id: int, version_id: int, chain: str, contracts: dict, account: str
 ):
@@ -200,7 +196,6 @@ def create_agent(
     )
     return agent
 
-@action(log_prints=True)
 def rebalance_lp(
     tokenA_amount,
     tokenB_amount,
