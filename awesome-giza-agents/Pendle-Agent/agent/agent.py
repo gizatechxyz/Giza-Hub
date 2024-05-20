@@ -4,9 +4,7 @@ import os
 import numpy as np
 from addresses import ADDRESSES
 from dotenv import find_dotenv, load_dotenv
-from giza_actions.action import action
 from giza_actions.agent import AgentResult, GizaAgent
-from giza_actions.task import task
 from helpers import (calculate_price, guess_out_tuple, input_tuple,
                      no_limit_order_params, swap_logic)
 from prefect import get_run_logger
@@ -19,7 +17,6 @@ load_dotenv(find_dotenv())
 os.environ["PENDLE-AGENT_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
 
 
-@task(name="Create a Giza agent using Agent_ID")
 def create_agent(agent_id: int, chain: str, contracts: dict, account_alias: str):
     """
     Create a Giza agent for the Pendle protocol
@@ -33,7 +30,6 @@ def create_agent(agent_id: int, chain: str, contracts: dict, account_alias: str)
     return agent
 
 
-@task(name="Run the yield prediction model")
 def predict(agent: GizaAgent, X: np.ndarray):
     """
     Predict the APR one week later.
@@ -50,7 +46,6 @@ def predict(agent: GizaAgent, X: np.ndarray):
     return prediction
 
 
-@task(name="Verify the inference proof and return the predicted value")
 def get_pred_val(prediction: AgentResult):
     """
     Get the value from the prediction.
@@ -66,8 +61,6 @@ def get_pred_val(prediction: AgentResult):
     return prediction.value
 
 
-# Create Action
-@action(log_prints=True)
 def SY_PY_swap(
     weETH_amount: float,
     agent_id: int,
