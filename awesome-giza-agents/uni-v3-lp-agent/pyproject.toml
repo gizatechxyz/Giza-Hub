@@ -8,13 +8,12 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "3.11"
 eth-ape = "^0.7.23"
-giza-actions = "^0.3.2"
-giza-cli = "^0.15.1"
 numpy = "^1.26.4"
 python-dotenv = "^1.0.1"
 scikit-learn = "^1.4.2"
 torch = "^2.3.0"
 yfinance = "^0.2.40"
+giza-sdk = "^0.1.1"
 
 
 [build-system]

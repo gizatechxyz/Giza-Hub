@@ -5,9 +5,10 @@ import pprint
 import numpy as np
 from addresses import ADDRESSES
 from dotenv import find_dotenv, load_dotenv
-from giza_actions.agent import AgentResult, GizaAgent
+from giza.agents import AgentResult, GizaAgent
 from lp_tools import get_tick_range
-from prefect import get_run_logger
+from logging import getLogger
+import logging
 from uni_helpers import (
     approve_token,
     check_allowance,
@@ -21,6 +22,7 @@ load_dotenv(find_dotenv())
 os.environ["DEV_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
 sepolia_rpc_url = os.environ.get("SEPOLIA_RPC_URL")
 
+logging.basicConfig(level=logging.INFO)
 
 
 def process_data(realized_vol: float, dec_price_change: float):
@@ -90,7 +92,7 @@ def rebalance_lp(
     chain=f"ethereum:sepolia:{sepolia_rpc_url}",
     nft_id=None,
 ):
-    logger = get_run_logger()
+    logger = getLogger("agent_logger")
     nft_manager_address = ADDRESSES["NonfungiblePositionManager"][11155111]
     tokenA_address = ADDRESSES["UNI"][11155111]
     tokenB_address = ADDRESSES["WETH"][11155111]

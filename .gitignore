@@ -4,3 +4,4 @@ Scarb.lock
 **/.ipynb_checkpoints
 **/tmp
 .DS_Store
+__pycache__

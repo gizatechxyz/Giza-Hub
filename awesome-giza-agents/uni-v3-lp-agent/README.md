@@ -23,8 +23,7 @@ In this project we will use the volatility prediction to adjust the width of the
 # 2. Setting up Your Development Environment
 
 - Python 3.11 or later must be installed on your machine
-- Giza CLI must be installed on your machine. You can install it by running `pip install giza-cli`
-- Actions-SDK should be installed with the extra agents. You can install it by running `pip install giza-actions[agents]`
+- giza-sdk should be installed to use giza cli and giza agents. You can install it by running `pip install giza-sdk`
 - You must have an active Giza account. If you don't have one, you can create one [here](https://cli.gizatech.xyz/examples/basic).
 - Depending on the framework you want to use to develop a volatility prediction model, you might need to install some external libraries. In this example, we are using torch, scikit-learn, and pandas. You can install them by running `pip install -U scikit-learn torch pandas`
 - You will also need a funded EOA ethereum address linked to an ape account. You can follow the [creating an account](https://app.gitbook.com/o/hEO6HqxrZikLvldqIQyx/s/BIIhWoU8ONL3YQxF4ZIU/tutorials/create-an-ai-agent-to-mint-a-mnist-nft#creating-an-account) and [funding the account](https://app.gitbook.com/o/hEO6HqxrZikLvldqIQyx/s/BIIhWoU8ONL3YQxF4ZIU/tutorials/create-an-ai-agent-to-mint-a-mnist-nft#funding-the-account) parts of our MNIST tutorial to complete these steps.
@@ -166,7 +165,7 @@ Now we will use the giza-actions sdk to develop our AI Agent and adjust the LP p
 All the code can be found in [this script](action_agent.py). An example of how to define a prediction task, create an AI Agent, and mint an NFT representing an LP position:
 
 ```
-from giza_actions.agent import GizaAgent
+from giza.agents import GizaAgent
 
 def predict(agent: GizaAgent, X: np.ndarray):
     """
