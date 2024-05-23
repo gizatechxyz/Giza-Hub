@@ -5,3 +5,5 @@ Scarb.lock
 **/tmp
 .DS_Store
 __pycache__
+.env
+**/.env
