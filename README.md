@@ -6,13 +6,13 @@ Welcome to Giza Hub! You will find models and use cases made by the community wi
 
 [Awesome Orion](awesome-orion/README.md) is a curated list of models and algorithms built with [Orion](https://github.com/gizatechxyz/orion).
 
-## ⚡️ Awesome Giza Actions
+## ⚡️ Awesome Giza ZKML
 
-[Awesome Giza Actions](awesome-giza-actions/README.md) is a curated list of algorithms and use cases built with [Action SDK](https://github.com/gizatechxyz/orion).
+[Awesome Giza ZKML](awesome-giza-zkml/README.md) is a curated list of tutorials and use cases built to showcase various ZKML model integrations [ZKML Eligible Frameworks](https://docs.gizatech.xyz/products/platform/model-compatibility).
 
 ## 🤖 Awesome Giza Agents
 
-[Awesome Giza Agents](awesome-giza-agents/README.md) is a curated list of agents built with [Giza Agents](https://agents.gizatech.xyz/).
+[Awesome Giza Agents](awesome-giza-agents/README.md) is a curated list of agents built with [Giza Agents](https://docs.gizatech.xyz/products/ai-agents).
 
 ## Learn more about the entire Giza ecosystem
 

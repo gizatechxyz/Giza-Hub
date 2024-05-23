@@ -1,22 +1,18 @@
 import argparse
 import os
+from logging import getLogger
 
 import numpy as np
 from addresses import ADDRESSES
+from ape import accounts
 from dotenv import find_dotenv, load_dotenv
 from giza.agents import AgentResult, GizaAgent
 from helpers import (calculate_price, guess_out_tuple, input_tuple,
                      no_limit_order_params, swap_logic)
-from logging import getLogger
-
-from ape import accounts
-
 
 load_dotenv(find_dotenv())
 
 os.environ["PENDLE-AGENT_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
-
-
 
 
 def create_agent(agent_id: int, chain: str, contracts: dict, account_alias: str):
@@ -84,7 +80,7 @@ def SY_PY_swap(
     weETH = ADDRESSES["weETH"]
     PT_weETH = ADDRESSES["PT_weETH"]
     wallet_address = accounts.load(account).address
-    
+
     # Load the data, this can be changed to retrieve live data
     file_path = "data/data_array.npy"
     X = np.load(file_path)
@@ -110,8 +106,6 @@ def SY_PY_swap(
     # predicted_value = get_pred_val(result)
     # logger.info("Verification complete, executing contract")
     logger.warning(f"Result: {result}")
-
-
 
     with agent.execute() as contracts:
         logger.warning("Verification complete, executing contract")

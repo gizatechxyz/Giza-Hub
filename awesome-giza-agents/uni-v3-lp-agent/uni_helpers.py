@@ -3,6 +3,7 @@ import time
 
 from ape.contracts.base import ContractInstance
 from dotenv import find_dotenv, load_dotenv
+
 from lp_tools import MAX_UINT_128
 
 load_dotenv(find_dotenv())

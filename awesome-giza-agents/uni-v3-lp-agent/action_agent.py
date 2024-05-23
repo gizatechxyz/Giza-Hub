@@ -1,21 +1,17 @@
 import argparse
+import logging
 import os
 import pprint
+from logging import getLogger
 
 import numpy as np
-from addresses import ADDRESSES
 from dotenv import find_dotenv, load_dotenv
 from giza.agents import AgentResult, GizaAgent
+
+from addresses import ADDRESSES
 from lp_tools import get_tick_range
-from logging import getLogger
-import logging
-from uni_helpers import (
-    approve_token,
-    check_allowance,
-    close_position,
-    get_all_user_positions,
-    get_mint_params,
-)
+from uni_helpers import (approve_token, check_allowance, close_position,
+                         get_all_user_positions, get_mint_params)
 
 load_dotenv(find_dotenv())
 
@@ -82,6 +78,7 @@ def get_pred_val(prediction: AgentResult):
     # This will block the executon until the prediction has generated the proof
     # and the proof has been verified
     return prediction.value[0][0]
+
 
 def rebalance_lp(
     tokenA_amount: int,
