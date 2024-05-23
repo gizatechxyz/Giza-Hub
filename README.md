@@ -8,7 +8,7 @@ Welcome to Giza Hub! You will find models and use cases made by the community wi
 
 ## ⚡️ Awesome Giza ZKML
 
-[Awesome Giza ZKML](awesome-giza-zkml/README.md) is a curated list of tutorials and use cases built to showcase various ZKML model integrations [ZKML Eligible Frameworks](https://docs.gizatech.xyz/products/platform/model-compatibility).
+[Awesome Giza ZKML](awesome-giza-zkml/README.md) is a curated list of tutorials and use cases built to showcase various ZKML model integrations, see [ZKML Eligible Frameworks](https://docs.gizatech.xyz/products/platform/model-compatibility).
 
 ## 🤖 Awesome Giza Agents
 
