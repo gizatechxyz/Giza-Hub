@@ -178,6 +178,30 @@ test = ["anyio[trio]", "coverage[toml] (>=4.5)", "hypothesis (>=4.0)", "mock (>=
 trio = ["trio (<0.22)"]
 
 [[package]]
+name = "ape-etherscan"
+version = "0.7.3"
+description = "ape-etherscan: Etherscan Explorer Plugin for Ethereum-based networks"
+optional = false
+python-versions = "<4,>=3.8"
+files = [
+    {file = "ape-etherscan-0.7.3.tar.gz", hash = "sha256:20eee14fc747f2747a2565700dbc0516808b3730e9eee9b2b8fe305d2bbe7eb9"},
+    {file = "ape_etherscan-0.7.3-py3-none-any.whl", hash = "sha256:306be6a8963e92c252d0cf0c67bdcb9a3fda6a4afc3191a62047301840d3df5f"},
+]
+
+[package.dependencies]
+eth-ape = ">=0.7.6,<0.8"
+ethpm-types = "*"
+requests = "*"
+yarl = "*"
+
+[package.extras]
+dev = ["IPython", "Sphinx (>=6.1.3,<7)", "ape-arbitrum", "ape-base", "ape-blast", "ape-bsc", "ape-fantom", "ape-infura", "ape-optimism", "ape-polygon", "ape-polygon-zkevm", "ape-solidity", "black (>=24.4.2,<25)", "commitizen", "flake8 (>=7.0.0,<8)", "flake8-breakpoint (>=1.1.0,<2)", "flake8-print (>=5.0.0,<6)", "hypothesis (>=6.2.0,<7)", "ipdb", "isort (>=5.13.2,<6)", "mdformat (>=0.7.17)", "mdformat-frontmatter (>=0.4.1)", "mdformat-gfm (>=0.3.5)", "mdformat-pyproject (>=0.0.1)", "mypy (>=1.10.0,<2)", "pre-commit", "pytest (>=6.0)", "pytest-cov", "pytest-mock", "pytest-watch", "pytest-xdist", "setuptools", "setuptools-scm", "sphinx-rtd-theme (>=1.2.0,<2)", "towncrier (>=19.2.0,<20)", "twine", "types-PyYAML", "types-requests (>=2.28.7)", "types-setuptools", "wheel"]
+doc = ["Sphinx (>=6.1.3,<7)", "sphinx-rtd-theme (>=1.2.0,<2)", "towncrier (>=19.2.0,<20)"]
+lint = ["black (>=24.4.2,<25)", "flake8 (>=7.0.0,<8)", "flake8-breakpoint (>=1.1.0,<2)", "flake8-print (>=5.0.0,<6)", "isort (>=5.13.2,<6)", "mdformat (>=0.7.17)", "mdformat-frontmatter (>=0.4.1)", "mdformat-gfm (>=0.3.5)", "mdformat-pyproject (>=0.0.1)", "mypy (>=1.10.0,<2)", "types-PyYAML", "types-requests (>=2.28.7)", "types-setuptools"]
+release = ["setuptools", "setuptools-scm", "twine", "wheel"]
+test = ["ape-arbitrum", "ape-base", "ape-blast", "ape-bsc", "ape-fantom", "ape-infura", "ape-optimism", "ape-polygon", "ape-polygon-zkevm", "ape-solidity", "hypothesis (>=6.2.0,<7)", "pytest (>=6.0)", "pytest-cov", "pytest-mock", "pytest-xdist"]
+
+[[package]]
 name = "ape-foundry"
 version = "0.7.5"
 description = "ape-foundry: Ape network provider for Foundry"
@@ -2039,20 +2063,22 @@ crc = ["crcmod"]
 gcsfuse = ["fusepy"]
 
 [[package]]
-name = "giza-actions"
-version = "0.3.2"
+name = "giza-agents"
+version = "0.4.0"
 description = "A Python SDK for Giza platform"
 optional = false
 python-versions = "<4.0,>=3.11"
 files = [
-    {file = "giza_actions-0.3.2-py3-none-any.whl", hash = "sha256:be42e139ef2b3540cd8a50d7eadc82338670323406b765fdaf50c616ab1ad81b"},
-    {file = "giza_actions-0.3.2.tar.gz", hash = "sha256:51ee75e90c37485c677a0c3f1e9145f6624e7641cb35d0f871617f40abfcbc03"},
+    {file = "giza_agents-0.4.0-py3-none-any.whl", hash = "sha256:a9735f26924af29ea6aaec3263bac73a7dfce2464482591299485753374d19b0"},
+    {file = "giza_agents-0.4.0.tar.gz", hash = "sha256:70ab6ee77924b963b9014420434897423d3e69a9a95018a6d1727a71c5a7ce23"},
 ]
 
 [package.dependencies]
+ape-etherscan = ">=0.7.2,<0.8.0"
 diskcache = ">=5.6.3,<6.0.0"
 distlib = ">=0.3.8,<0.4.0"
-giza-cli = ">=0.15.0,<1.0.0"
+eth-ape = ">=0.7.10,<0.8.0"
+giza-cli = ">=0.17.0"
 giza-osiris = ">=0.2.8,<1.0.0"
 httpx = ">=0.25.1,<0.26.0"
 loguru = ">=0.7.2,<0.8.0"
@@ -2064,18 +2090,15 @@ prefect-docker = ">=0.4.1,<0.5.0"
 prefect-gcp = ">=0.5.4,<0.6.0"
 pyyaml = ">=6.0.1,<7.0.0"
 
-[package.extras]
-agents = ["ape-etherscan (>=0.7.2,<0.8.0)", "eth-ape (>=0.7.10,<0.8.0)"]
-
 [[package]]
 name = "giza-cli"
-version = "0.15.1"
+version = "0.17.0"
 description = "CLI for interacting with Giza"
 optional = false
 python-versions = "<4.0,>=3.11"
 files = [
-    {file = "giza_cli-0.15.1-py3-none-any.whl", hash = "sha256:0704eaf90ec6310358bc7aa0985a7b01684f9c814e0a957c01895e1181918db6"},
-    {file = "giza_cli-0.15.1.tar.gz", hash = "sha256:7914a5b04bd1c635f0bec3301cc79ca691aa3236c5ba368be8b9dcb7613f7183"},
+    {file = "giza_cli-0.17.0-py3-none-any.whl", hash = "sha256:b3f97a7fe5d9f46568eaa365844e774cccee9966c4f0f8ad64bbbd8d8b86bdbc"},
+    {file = "giza_cli-0.17.0.tar.gz", hash = "sha256:247b04b0f93b17f177dd3a90ec2f4e476205430ee7834c41cce21d264a842a64"},
 ]
 
 [package.dependencies]
@@ -2095,13 +2118,13 @@ types-requests = ">=2.31.0.2,<3.0.0.0"
 
 [[package]]
 name = "giza-datasets"
-version = "0.1.2"
+version = "0.3.0"
 description = ""
 optional = false
-python-versions = ">=3.11,<4.0"
+python-versions = "<4.0,>=3.11"
 files = [
-    {file = "giza_datasets-0.1.2-py3-none-any.whl", hash = "sha256:49bd0ebfafbc3a8b4626855215867392ccba106c0db663567c9e52ed5650ad61"},
-    {file = "giza_datasets-0.1.2.tar.gz", hash = "sha256:a2680bc0b11196b5ed973cac0ff747e46c2e560d82e9d11976916ff3c3e0e3b3"},
+    {file = "giza_datasets-0.3.0-py3-none-any.whl", hash = "sha256:7a06fc38d5a1798f63592255a044bfda01a89870e199b721f04a1d434d232e26"},
+    {file = "giza_datasets-0.3.0.tar.gz", hash = "sha256:eee5be5ba6d7289cdbdd662610e5c459cfde0ccb4cb7a00af74844f283944b24"},
 ]
 
 [package.dependencies]
@@ -2129,6 +2152,41 @@ polars = {version = ">=0.19.16,<0.20.0", extras = ["pyarrow"]}
 typer = {version = "*", extras = ["all"]}
 
 [[package]]
+name = "giza-sdk"
+version = "0.1.1"
+description = "Metapackage for installing Giza packages"
+optional = false
+python-versions = "<4.0,>=3.11"
+files = [
+    {file = "giza_sdk-0.1.1-py3-none-any.whl", hash = "sha256:bf94624c7745bb6e12b094332314a5a08d026cda5d4727dc5e00fcbebfad632e"},
+    {file = "giza_sdk-0.1.1.tar.gz", hash = "sha256:75a1422efb3640d19989c75d61c99a0d883f47ba69838a5cfa5000ff14192747"},
+]
+
+[package.dependencies]
+giza-agents = ">=0.4.0"
+giza-cli = ">=0.17.0"
+giza-datasets = ">=0.3.0"
+giza-zkcook = ">=0.2.1,<0.3.0"
+
+[[package]]
+name = "giza-zkcook"
+version = "0.2.2"
+description = ""
+optional = false
+python-versions = "<4.0,>=3.11"
+files = [
+    {file = "giza_zkcook-0.2.2-py3-none-any.whl", hash = "sha256:fe079ad8795bc232db89be29664b157668d06b022cff457a2e9ed04e1fe4f3fd"},
+    {file = "giza_zkcook-0.2.2.tar.gz", hash = "sha256:6c55838d0dbdbdac7b156eaf2ee016b319ea5a1de9c474ebb3a710d7541d5f6f"},
+]
+
+[package.dependencies]
+pandas = ">=1.5.3,<2.0.0"
+pydantic = ">=2,<3"
+rich = ">=13,<14"
+scikit-learn = "1.4.2"
+scikit-optimize = ">=0.10.1,<0.11.0"
+
+[[package]]
 name = "google-api-core"
 version = "2.19.0"
 description = "Google API client core library"
@@ -2153,13 +2211,13 @@ grpcio-gcp = ["grpcio-gcp (>=0.2.2,<1.0.dev0)"]
 
 [[package]]
 name = "google-api-python-client"
-version = "2.129.0"
+version = "2.130.0"
 description = "Google API Client Library for Python"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "google-api-python-client-2.129.0.tar.gz", hash = "sha256:984cc8cc8eb4923468b1926d2b8effc5b459a4dda3c845896eb87c153b28ef84"},
-    {file = "google_api_python_client-2.129.0-py2.py3-none-any.whl", hash = "sha256:d50f7e2dfdbb7fc2732f6a0cba1c54d7bb676390679526c6bb628c901e43ec86"},
+    {file = "google-api-python-client-2.130.0.tar.gz", hash = "sha256:2bba3122b82a649c677b8a694b8e2bbf2a5fbf3420265caf3343bb88e2e9f0ae"},
+    {file = "google_api_python_client-2.130.0-py2.py3-none-any.whl", hash = "sha256:7d45a28d738628715944a9c9d73e8696e7e03ac50b7de87f5e3035cefa94ed3a"},
 ]
 
 [package.dependencies]
@@ -4655,6 +4713,23 @@ six = ">=1.10.0,<2.0"
 varint = ">=1.0.2,<2.0"
 
 [[package]]
+name = "pyaml"
+version = "24.4.0"
+description = "PyYAML-based module to produce a bit more pretty and readable YAML-serialized data"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pyaml-24.4.0-py3-none-any.whl", hash = "sha256:acc2b39c55cb0cbe4f694a6d3886f89ad3d2a5b3efcece526202f8de9a6b27de"},
+    {file = "pyaml-24.4.0.tar.gz", hash = "sha256:0e483d9289010e747a325dc43171bcc39d6562dd1dd4719e8cc7e7c96c99fce6"},
+]
+
+[package.dependencies]
+PyYAML = "*"
+
+[package.extras]
+anchors = ["unidecode"]
+
+[[package]]
 name = "pyarrow"
 version = "15.0.2"
 description = "Python library for Apache Arrow"
@@ -5766,6 +5841,30 @@ examples = ["matplotlib (>=3.3.4)", "pandas (>=1.1.5)", "plotly (>=5.14.0)", "po
 tests = ["black (>=23.3.0)", "matplotlib (>=3.3.4)", "mypy (>=1.3)", "numpydoc (>=1.2.0)", "pandas (>=1.1.5)", "polars (>=0.19.12)", "pooch (>=1.6.0)", "pyamg (>=4.0.0)", "pyarrow (>=12.0.0)", "pytest (>=7.1.2)", "pytest-cov (>=2.9.0)", "ruff (>=0.0.272)", "scikit-image (>=0.17.2)"]
 
 [[package]]
+name = "scikit-optimize"
+version = "0.10.1"
+description = "Sequential model-based optimization toolbox."
+optional = false
+python-versions = "*"
+files = [
+    {file = "scikit-optimize-0.10.1.tar.gz", hash = "sha256:1016e953e3b4de14f16c049efaf14eeaf347a08cf135488447c16c45dadadbc4"},
+    {file = "scikit_optimize-0.10.1-py2.py3-none-any.whl", hash = "sha256:044fb125ede1275f7cae7c70327af7f0bd7ec3ed0243c7401b29a4b8f94cb385"},
+]
+
+[package.dependencies]
+joblib = ">=0.11"
+numpy = ">=1.20.3"
+packaging = ">=21.3"
+pyaml = ">=16.9"
+scikit-learn = ">=1.0.0"
+scipy = ">=1.1.0"
+
+[package.extras]
+dev = ["flake8", "pandas", "pytest", "pytest-cov", "pytest-xdist"]
+doc = ["memory-profiler", "numpydoc", "sphinx", "sphinx-book-theme", "sphinx-gallery (>=0.6)"]
+plots = ["matplotlib (>=2.0.0)"]
+
+[[package]]
 name = "scipy"
 version = "1.13.0"
 description = "Fundamental algorithms for scientific computing in Python"
@@ -6317,13 +6416,13 @@ types-pyasn1 = "*"
 
 [[package]]
 name = "types-requests"
-version = "2.31.0.20240406"
+version = "2.32.0.20240523"
 description = "Typing stubs for requests"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-requests-2.31.0.20240406.tar.gz", hash = "sha256:4428df33c5503945c74b3f42e82b181e86ec7b724620419a2966e2de604ce1a1"},
-    {file = "types_requests-2.31.0.20240406-py3-none-any.whl", hash = "sha256:6216cdac377c6b9a040ac1c0404f7284bd13199c0e1bb235f4324627e8898cf5"},
+    {file = "types-requests-2.32.0.20240523.tar.gz", hash = "sha256:26b8a6de32d9f561192b9942b41c0ab2d8010df5677ca8aa146289d11d505f57"},
+    {file = "types_requests-2.32.0.20240523-py3-none-any.whl", hash = "sha256:f19ed0e2daa74302069bbbbf9e82902854ffa780bc790742a810a9aaa52f65ec"},
 ]
 
 [package.dependencies]
@@ -6893,4 +6992,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<4.0"
-content-hash = "b1722e8aaffba31dd6ecf925eb934a2c7a1b09fb1beedec6a631a78cbd790d77"
+content-hash = "5c3da9854100423aa5d78f2707b658dd1349c4ebbc60519eb44cd31e54068926"

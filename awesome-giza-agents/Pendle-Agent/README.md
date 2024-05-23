@@ -1,6 +1,6 @@
 # Introduction
 
-In this tutorial, we will go over the basics of Giza agents and implement a Pendle Trading bot using the Giza Agents Framework. Although we will explain the basic flow to create an agent, we strongly recommend you to first read the [Giza Agents](https://agents.gizatech.xyz/) and [Giza CLI](https://cli.gizatech.xyz/) documentations to understand the fundamentals of Giza Stack.
+In this tutorial, we will go over the basics of Giza agents and implement a Pendle Trading bot using the Giza Agents Framework. Although we will explain the basic flow to create an agent, we strongly recommend you to first read the [Giza Docs](https://docs.gizatech.xyz) to understand the fundamentals of Giza Stack.
 
 This tutorial is meant to exemplify various ways the ML models can be used within the Giza Agents framework to create on-chain actions in an automated way, while still adhering to the trust-minimizing approach that underly blockchains and DeFi. Pendle Protocol is a great protocol to build on since it is relatively popular and is a great enviroment to build a yield trading bot given its native yield abstraction tokens, however similar agents can be built on any DeFi protocol.
 
@@ -162,10 +162,10 @@ The lines starting from agent.execute() represents the onchain interactions that
 
 # 7. Running the Pendle Agent
 
-To execute the agent, run the following command
+To execute the agent, run the following command (change the --agent-id, and other swap paremeters accordingly)
 
 ```bash
-python agent/agent.py --agent-id 4 --weETH-amount 5 --fixed-yield 1.2 --expiration-days 30
+python agent/agent.py --agent-id 5 --weETH-amount 5 --fixed-yield 1.2 --expiration-days 30
 ```
  *You can change the variables to see how it affects the trade at the end.*
 

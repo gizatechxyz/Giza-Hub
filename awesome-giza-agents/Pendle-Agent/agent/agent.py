@@ -4,17 +4,19 @@ import os
 import numpy as np
 from addresses import ADDRESSES
 from dotenv import find_dotenv, load_dotenv
-from giza_actions.agent import AgentResult, GizaAgent
+from giza.agents import AgentResult, GizaAgent
 from helpers import (calculate_price, guess_out_tuple, input_tuple,
                      no_limit_order_params, swap_logic)
-from prefect import get_run_logger
+from logging import getLogger
+
 from ape import accounts
 
 
 load_dotenv(find_dotenv())
 
-
 os.environ["PENDLE-AGENT_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
+
+
 
 
 def create_agent(agent_id: int, chain: str, contracts: dict, account_alias: str):
@@ -73,7 +75,7 @@ def SY_PY_swap(
     os.environ["PENDLE-AGENT_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
 
     # Create logger
-    logger = get_run_logger()
+    logger = getLogger("agent_logger")
 
     # Load the addresses
     router = ADDRESSES["Pendle_v3_Router"]
@@ -107,12 +109,12 @@ def SY_PY_swap(
     # If you want to wait until the verification to continue, uncomment the two following lines
     # predicted_value = get_pred_val(result)
     # logger.info("Verification complete, executing contract")
-    logger.info(f"Result: {result}")
+    logger.warning(f"Result: {result}")
 
 
 
     with agent.execute() as contracts:
-        logger.info("Verification complete, executing contract")
+        logger.warning("Verification complete, executing contract")
 
         decimals = contracts.weETH.decimals()
         weETH_amount = weETH_amount * 10**decimals
@@ -120,14 +122,14 @@ def SY_PY_swap(
         state = contracts.SY_weETH_Market.readState(contracts.router.address)
 
         PT_price = calculate_price(state.lastLnImpliedRate, decimals)
-        logger.info(f"Calculated Price: {PT_price}")
+        logger.warning(f"Calculated Price: {PT_price}")
 
         # If the two lines above are not commented, swap_logic will take a while, since it will wait until the result is verified to access result.value
         traded_SY_amount, PT_weight = swap_logic(
             weETH_amount, PT_price, fixed_yield, result.value[0][0], expiration_days
         )
 
-        logger.info(
+        logger.warning(
             f"The amount of SY to be traded: {traded_SY_amount}, PT_weight: {PT_weight}"
         )
 
@@ -147,7 +149,7 @@ def SY_PY_swap(
         PT_balance = contracts.PT_weETH.balanceOf(wallet_address)
         weETH_balance = contracts.weETH.balanceOf(wallet_address)
 
-        logger.info(
+        logger.warning(
             f"Swap succesfull! Currently, you own: {PT_balance} PT-weETH and {weETH_balance} weETH"
         )
 
