@@ -24,9 +24,9 @@ In this project we will use the volatility prediction to adjust the width of the
 
 - Python 3.11 or later must be installed on your machine
 - giza-sdk should be installed to use giza cli and giza agents. You can install it by running `pip install giza-sdk`
-- You must have an active Giza account. If you don't have one, you can create one [here](https://cli.gizatech.xyz/examples/basic).
+- You must have an active Giza account. If you don't have one, you can create one [here](https://docs.gizatech.xyz/products/platform/resources/users).
 - Depending on the framework you want to use to develop a volatility prediction model, you might need to install some external libraries. In this example, we are using torch, scikit-learn, and pandas. You can install them by running `pip install -U scikit-learn torch pandas`
-- You will also need a funded EOA ethereum address linked to an ape account. You can follow the [creating an account](https://app.gitbook.com/o/hEO6HqxrZikLvldqIQyx/s/BIIhWoU8ONL3YQxF4ZIU/tutorials/create-an-ai-agent-to-mint-a-mnist-nft#creating-an-account) and [funding the account](https://app.gitbook.com/o/hEO6HqxrZikLvldqIQyx/s/BIIhWoU8ONL3YQxF4ZIU/tutorials/create-an-ai-agent-to-mint-a-mnist-nft#funding-the-account) parts of our MNIST tutorial to complete these steps.
+- You will also need a funded EOA ethereum address linked to an ape account. You can follow the [creating an account](https://docs.gizatech.xyz/products/ai-agents/how-to-guides/create-an-account-wallet) and [funding the account](https://docs.gizatech.xyz/tutorials/ai-agents/create-an-ai-agent-to-mint-an-mnist-nft) parts of our MNIST tutorial to complete these steps.
 - Once you have a funded development address, you need to get the tokens you want to provide the liquidity for. In this example we are using the UNI-WETH pool with 0.3% fee on ethereum sepolia. You can approve and mint WETH, and swap some of it for UNI with the [get_tokens.py](get_tokens.py) script. Simply execute `python get_tokens.py` and follow the prompts in the console. The script will mint 0.0001 WETH and swap half of it for UNI.
 - Finally, we will need some environment variables. Create a .env file in the directory of this project and populate it with these 2 variables:
 
@@ -49,7 +49,7 @@ First, let's log-in to the giza-cli with `giza users login`
 
 If you don't have a giza workspace yet, you can create it with `giza workspaces create`
 
-Next, we need to create a Giza Model (more on it [here](https://actions.gizatech.xyz/concepts/model)). You can achieve it with ` giza models create --name vol-pred-with-zkml --description "Volatility prediction with ZKML"`. In your console, you should get your new model-id. Given that this is a new model, its version-id will be 1.
+Next, we need to create a Giza Model (more on it [here](https://docs.gizatech.xyz/products/platform/resources/models#create-a-model)). You can achieve it with ` giza models create --name vol-pred-with-zkml --description "Volatility prediction with ZKML"`. In your console, you should get your new model-id. Given that this is a new model, its version-id will be 1.
 
 After creating a Giza Model, we need to transpile our ONNX model representation into Cairo. To achieve this, simply execute `giza transpile --model-id <YOUR-MODEL-ID> --framework CAIRO <PATH-TO-YOU-ONNX-MODEL> --output-path <YOUR-OUTPUT-PATH>`
 
