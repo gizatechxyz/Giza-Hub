@@ -43,7 +43,7 @@ def predict(agent: GizaAgent, X: np.ndarray):
         int: Predicted value.
     """
     X = X.reshape(1, 7)
-    prediction = agent.predict(input_feed={"input": X}, verifiable=True, job_size="XL")
+    prediction = agent.predict(input_feed={"input": X}, verifiable=True)
 
     return prediction
 

@@ -165,7 +165,7 @@ The lines starting from agent.execute() represents the onchain interactions that
 To execute the agent, run the following command (change the --agent-id, and other swap paremeters accordingly)
 
 ```bash
-python agent/agent.py --agent-id 5 --weETH-amount 5 --fixed-yield 1.2 --expiration-days 30
+python agent/agent.py --agent-id 15 --weETH-amount 5 --fixed-yield 1.2 --expiration-days 30
 ```
  *You can change the variables to see how it affects the trade at the end.*
 
