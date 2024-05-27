@@ -1,0 +1,6 @@
+[package]
+name = "xgb_diabetes"
+version = "0.1.0"
+
+[cairo]
+enable-gas = false

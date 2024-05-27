@@ -1,37 +1,32 @@
 import argparse
+import logging
 import os
 import pprint
+from logging import getLogger
 
 import numpy as np
-from addresses import ADDRESSES
 from dotenv import find_dotenv, load_dotenv
-from giza_actions.action import action
-from giza_actions.agent import AgentResult, GizaAgent
-from giza_actions.task import task
+from giza.agents import AgentResult, GizaAgent
+
+from addresses import ADDRESSES
 from lp_tools import get_tick_range
-from prefect import get_run_logger
-from uni_helpers import (
-    approve_token,
-    check_allowance,
-    close_position,
-    get_all_user_positions,
-    get_mint_params,
-)
+from uni_helpers import (approve_token, check_allowance, close_position,
+                         get_all_user_positions, get_mint_params)
 
 load_dotenv(find_dotenv())
 
 os.environ["DEV_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
 sepolia_rpc_url = os.environ.get("SEPOLIA_RPC_URL")
 
+logging.basicConfig(level=logging.INFO)
 
-@task(name="Data processing")
+
 def process_data(realized_vol: float, dec_price_change: float):
     pct_change_sq = (100 * dec_price_change) ** 2
     X = np.array([[realized_vol, pct_change_sq]])
     return X
 
 
-@task(name="Get volatility and price change data")
 def get_data():
     # TODO: implement fetching onchain or from some other source
     # hardcoding the values for now
@@ -40,7 +35,6 @@ def get_data():
     return realized_vol, dec_price_change
 
 
-@task(name="Create a Giza agent for the Volatility prediction model")
 def create_agent(
     model_id: int, version_id: int, chain: str, contracts: dict, account: str
 ):
@@ -57,7 +51,6 @@ def create_agent(
     return agent
 
 
-@task(name="Run the volatility prediction model")
 def predict(agent: GizaAgent, X: np.ndarray):
     """
     Predict the next day volatility.
@@ -72,7 +65,6 @@ def predict(agent: GizaAgent, X: np.ndarray):
     return prediction
 
 
-@task(name="Verify the inference proof and return the predicted value")
 def get_pred_val(prediction: AgentResult):
     """
     Get the value from the prediction.
@@ -88,8 +80,6 @@ def get_pred_val(prediction: AgentResult):
     return prediction.value[0][0]
 
 
-# Create Action
-@action(log_prints=True)
 def rebalance_lp(
     tokenA_amount: int,
     tokenB_amount: int,
@@ -99,7 +89,7 @@ def rebalance_lp(
     chain=f"ethereum:sepolia:{sepolia_rpc_url}",
     nft_id=None,
 ):
-    logger = get_run_logger()
+    logger = getLogger("agent_logger")
     nft_manager_address = ADDRESSES["NonfungiblePositionManager"][11155111]
     tokenA_address = ADDRESSES["UNI"][11155111]
     tokenB_address = ADDRESSES["WETH"][11155111]

@@ -1,8 +1,9 @@
 import os
 
-from addresses import ADDRESSES
 from ape import Contract, accounts, chain, networks
 from dotenv import find_dotenv, load_dotenv
+
+from addresses import ADDRESSES
 
 load_dotenv(find_dotenv())
 

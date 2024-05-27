@@ -1,25 +1,20 @@
 import argparse
 import os
+from logging import getLogger
 
 import numpy as np
 from addresses import ADDRESSES
+from ape import accounts
 from dotenv import find_dotenv, load_dotenv
-from giza_actions.action import action
-from giza_actions.agent import AgentResult, GizaAgent
-from giza_actions.task import task
+from giza.agents import AgentResult, GizaAgent
 from helpers import (calculate_price, guess_out_tuple, input_tuple,
                      no_limit_order_params, swap_logic)
-from prefect import get_run_logger
-from ape import accounts
-
 
 load_dotenv(find_dotenv())
-
 
 os.environ["PENDLE-AGENT_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
 
 
-@task(name="Create a Giza agent using Agent_ID")
 def create_agent(agent_id: int, chain: str, contracts: dict, account_alias: str):
     """
     Create a Giza agent for the Pendle protocol
@@ -33,7 +28,6 @@ def create_agent(agent_id: int, chain: str, contracts: dict, account_alias: str)
     return agent
 
 
-@task(name="Run the yield prediction model")
 def predict(agent: GizaAgent, X: np.ndarray):
     """
     Predict the APR one week later.
@@ -45,12 +39,11 @@ def predict(agent: GizaAgent, X: np.ndarray):
         int: Predicted value.
     """
     X = X.reshape(1, 7)
-    prediction = agent.predict(input_feed={"input": X}, verifiable=True, job_size="XL")
+    prediction = agent.predict(input_feed={"input": X}, verifiable=True)
 
     return prediction
 
 
-@task(name="Verify the inference proof and return the predicted value")
 def get_pred_val(prediction: AgentResult):
     """
     Get the value from the prediction.
@@ -66,8 +59,6 @@ def get_pred_val(prediction: AgentResult):
     return prediction.value
 
 
-# Create Action
-@action(log_prints=True)
 def SY_PY_swap(
     weETH_amount: float,
     agent_id: int,
@@ -80,7 +71,7 @@ def SY_PY_swap(
     os.environ["PENDLE-AGENT_PASSPHRASE"] = os.environ.get("DEV_PASSPHRASE")
 
     # Create logger
-    logger = get_run_logger()
+    logger = getLogger("agent_logger")
 
     # Load the addresses
     router = ADDRESSES["Pendle_v3_Router"]
@@ -89,7 +80,7 @@ def SY_PY_swap(
     weETH = ADDRESSES["weETH"]
     PT_weETH = ADDRESSES["PT_weETH"]
     wallet_address = accounts.load(account).address
-    
+
     # Load the data, this can be changed to retrieve live data
     file_path = "data/data_array.npy"
     X = np.load(file_path)
@@ -114,12 +105,10 @@ def SY_PY_swap(
     # If you want to wait until the verification to continue, uncomment the two following lines
     # predicted_value = get_pred_val(result)
     # logger.info("Verification complete, executing contract")
-    logger.info(f"Result: {result}")
-
-
+    logger.warning(f"Result: {result}")
 
     with agent.execute() as contracts:
-        logger.info("Verification complete, executing contract")
+        logger.warning("Verification complete, executing contract")
 
         decimals = contracts.weETH.decimals()
         weETH_amount = weETH_amount * 10**decimals
@@ -127,14 +116,14 @@ def SY_PY_swap(
         state = contracts.SY_weETH_Market.readState(contracts.router.address)
 
         PT_price = calculate_price(state.lastLnImpliedRate, decimals)
-        logger.info(f"Calculated Price: {PT_price}")
+        logger.warning(f"Calculated Price: {PT_price}")
 
         # If the two lines above are not commented, swap_logic will take a while, since it will wait until the result is verified to access result.value
         traded_SY_amount, PT_weight = swap_logic(
             weETH_amount, PT_price, fixed_yield, result.value[0][0], expiration_days
         )
 
-        logger.info(
+        logger.warning(
             f"The amount of SY to be traded: {traded_SY_amount}, PT_weight: {PT_weight}"
         )
 
@@ -154,7 +143,7 @@ def SY_PY_swap(
         PT_balance = contracts.PT_weETH.balanceOf(wallet_address)
         weETH_balance = contracts.weETH.balanceOf(wallet_address)
 
-        logger.info(
+        logger.warning(
             f"Swap succesfull! Currently, you own: {PT_balance} PT-weETH and {weETH_balance} weETH"
         )
 

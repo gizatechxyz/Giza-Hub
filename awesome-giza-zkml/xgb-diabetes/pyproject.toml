@@ -7,11 +7,9 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-giza-cli = "^0.15.1"
-giza-actions = "^0.3.2"
-scikit-learn = "^1.4.2"
-xgboost = "^2.0.3"
 jupyter = "^1.0.0"
+xgboost = "^2.0.3"
+giza-sdk = "^0.1.1"
 
 
 [build-system]
